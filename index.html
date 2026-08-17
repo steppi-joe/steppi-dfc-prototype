@@ -403,6 +403,20 @@
   .pulserow .top{display:flex;justify-content:space-between;font-size:13.5px;margin-bottom:5px}
   .pulserow .top s{color:var(--txt-2);text-decoration:none;font-size:12px}
 
+  .sharecard{text-align:center}
+  .sharecard .yr{font-size:31px;font-weight:800;font-style:italic;letter-spacing:-.01em;margin:2px 0 14px}
+  .sharecard .yr b{color:var(--green)}
+  .sharecard .who{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:18px}
+  .sharecard .who .nm{font-size:17px;font-weight:600}
+  .sharegrid30{display:grid;grid-template-columns:repeat(5,1fr);gap:9px 6px;margin-bottom:18px}
+  .sharegrid30 .d{display:flex;flex-direction:column;align-items:center;gap:4px}
+  .sharegrid30 .chip{
+    font-size:8.5px;font-weight:700;border-radius:20px;padding:2px 7px;
+    background:var(--green);color:#062400;line-height:1.3
+  }
+  .sharegrid30 .chip.off{background:#1A222C;color:#3B4857}
+  .sharegrid30 .d.off .dfcmark{opacity:.18;filter:grayscale(1)}
+
   .note{
     font-size:10.5px;color:var(--txt-3);background:#0C1015;border:1px dashed #232C38;
     border-radius:10px;padding:9px 11px;margin-top:14px;line-height:1.5
@@ -481,6 +495,7 @@
   <button onclick="openModal('m-calendar')">Date picker</button>
 
   <div class="grp">Badges &amp; share</div>
+  <button onclick="openShare()">Shareable scorecard</button>
   <button onclick="showDayBadge(1)">Day badge</button>
   <button onclick="openModal('m-finisher')">DFC Finisher badge</button>
   <button onclick="openModal('m-teamchamps')">We are all champions</button>
@@ -765,7 +780,11 @@
     <div class="navbar">
       <button class="back" onclick="back()"><svg viewBox="0 0 24 24" fill="none" stroke="#062400" stroke-width="3"><path d="M15 18l-6-6 6-6"/></svg></button>
       <div class="title">Dubai Fitness Challenge</div>
-      <div class="right">⋮</div>
+      <div class="right" style="width:52px;gap:12px">
+        <button onclick="openShare()" aria-label="Share scorecard"
+                style="background:none;border:0;color:#fff;font-size:15px;cursor:pointer;padding:0">⤴</button>
+        <span>⋮</span>
+      </div>
     </div>
     <div class="scroll">
       <div class="tabs">
@@ -1338,6 +1357,20 @@
     </div>
   </div>
 
+  <!-- Shareable scorecard -->
+  <div class="overlay" id="m-sharecard">
+    <div class="sheet" style="padding:20px 16px">
+      <button class="x" onclick="closeModal()">✕</button>
+      <div id="shareCard" class="sharecard"></div>
+      <div style="font-size:13px;color:var(--txt-2);text-align:center;margin:16px 0 0">Share your 30x30</div>
+      <div class="sharegrid" style="grid-template-columns:repeat(3,1fr)">
+        <button onclick="toast('Opening Instagram Story…')"><span class="ic">📷</span>Instagram Story</button>
+        <button onclick="toast('Opening WhatsApp…')"><span class="ic">💬</span>WhatsApp</button>
+        <button onclick="toast('Opening share sheet…')"><span class="ic">↗</span>More</button>
+      </div>
+    </div>
+  </div>
+
   <div class="toast" id="toast"></div>
 </div>
 
@@ -1346,6 +1379,7 @@
 
 <script>
 /* ============ Logo mark (placeholder) ============ */
+const STEPPI_MARK="https://mcusercontent.com/348170726566bdf6f8f4d311d/images/b6200ccb-274c-465c-2bcf-7299c4c99941.png";
 const DFC_LOCKUP="https://mcusercontent.com/348170726566bdf6f8f4d311d/images/5ee0d5e4-edcd-2af8-4733-5385b2d03b6f.png";
 function dfcLogo(size){
   const s = size||74;
@@ -1641,6 +1675,29 @@ function renderScorecard(){
 function showDayBadge(d){
   document.getElementById('badgeDay').textContent='DAY '+d;
   openModal('m-daybadge');
+}
+
+/* ============ Shareable scorecard ============ */
+function openShare(){ renderShareCard(); openModal('m-sharecard'); }
+function renderShareCard(){
+  const n=state.done.length;
+  const days=Array.from({length:30},(_,i)=>i+1).map(d=>{
+    const on=state.done.includes(d);
+    return `<div class="d${on?'':' off'}">
+      <span class="chip${on?'':' off'}">Day ${d}</span>
+      <span class="dfcmark" style="width:100%"></span></div>`;
+  }).join('');
+  document.getElementById('shareCard').innerHTML=`
+    <div class="dfc" style="margin:0 0 4px">${dfcLogo(96)}</div>
+    <div class="yr"><b>DFC</b> 2026</div>
+    <div class="who"><div class="avatar">JK</div><div class="nm">Jessica Kodan</div></div>
+    <div class="statline"><span class="l">Badges earned</span>
+      <span class="v">${n} <small>/ 30</small></span></div>
+    <div class="bar" style="margin-bottom:16px"><i style="width:${n/30*100}%"></i></div>
+    <div class="sharegrid30">${days}</div>
+    <img class="steppi" src="${STEPPI_MARK}" alt="STEPPI" style="height:26px">
+    <div class="cta" style="margin-top:7px">Track your 30x30 on STEPPI</div>
+    <div class="tag" style="margin-top:8px">#Dubai30x30</div>`;
 }
 
 /* ============ Leaderboard ============ */
