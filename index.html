@@ -1,0 +1,1868 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
+<meta name="theme-color" content="#000000">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>STEPPI × DFC 2026 — Prototype</title>
+<style>
+  :root{
+    --bg:#000000;
+    --card:#0D1117;
+    --card-2:#12181F;
+    --line:#1E2733;
+    --line-soft:#161D26;
+    --txt:#FFFFFF;
+    --txt-2:#96A2B0;
+    --txt-3:#5E6B7A;
+    --green:#7CFF1E;
+    --green-dim:#5BC714;
+    --cyan:#00B7FF;
+    --cyan-dim:#0B87BE;
+    --orange:#FF8A2B;
+    --gold:#F5C33B;
+    --navy:#262F4C;
+    --navy-2:#2C3657;
+    --teal:#2FE8C0;
+    --r:16px;
+    --font:-apple-system,BlinkMacSystemFont,"SF Pro Display","Inter","Segoe UI",Roboto,sans-serif;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0}
+  body{
+    background:#0A0C0F;
+    font-family:var(--font);
+    color:var(--txt);
+    display:flex;
+    min-height:100vh;
+    justify-content:center;
+    align-items:flex-start;
+    gap:28px;
+    padding:28px 20px 60px;
+  }
+
+  /* ---------- Demo chrome ---------- */
+  .rail{
+    width:210px;flex:0 0 210px;position:sticky;top:28px;
+    background:#0F1319;border:1px solid #1B2029;border-radius:14px;padding:14px;
+  }
+  .rail h1{font-size:13px;margin:0 0 2px;letter-spacing:.02em}
+  .rail p{font-size:11px;color:var(--txt-3);margin:0 0 12px;line-height:1.4}
+  .rail .grp{font-size:9.5px;text-transform:uppercase;letter-spacing:.12em;color:var(--txt-3);margin:12px 0 5px}
+  .rail button{
+    display:block;width:100%;text-align:left;background:transparent;border:0;
+    color:var(--txt-2);font-family:var(--font);font-size:11.5px;padding:5px 7px;border-radius:7px;cursor:pointer
+  }
+  .rail button:hover{background:#171D26;color:#fff}
+  .rail .reset{margin-top:14px;background:#1B2029;color:#fff;text-align:center;font-size:11px;padding:7px}
+  .rail .phbtn{
+    display:flex;align-items:center;width:100%;font-size:11px;padding:7px 9px;margin-bottom:5px;
+    border-radius:8px;border:1px solid #222B36;background:#141922;color:var(--txt-3);cursor:pointer;
+    font-family:var(--font);text-align:left
+  }
+  .rail .phbtn:hover{border-color:#2E3947;color:var(--txt-2)}
+  .rail .phbtn.on{font-weight:600}
+  .rail .phbtn#ph-day1.on{background:#1D2430;border-color:#3C4A5C;color:#9FB3C8}
+  .rail .phbtn#ph-live.on{background:#12313A;border-color:var(--cyan);color:var(--cyan)}
+  .rail .phbtn#ph-complete.on{background:#3A2E10;border-color:var(--gold);color:var(--gold)}
+
+  .stage{display:flex;flex-direction:column;align-items:center;gap:12px}
+  .caption{font-size:11px;color:var(--txt-3);text-align:center;max-width:390px;line-height:1.5}
+
+  /* ---------- Phone ---------- */
+  .phone{
+    width:390px;height:844px;background:var(--bg);border-radius:46px;
+    position:relative;overflow:hidden;flex:0 0 auto;
+    box-shadow:0 0 0 10px #14181E, 0 0 0 11px #262D36, 0 30px 70px rgba(0,0,0,.7);
+  }
+  .statusbar{
+    height:52px;display:flex;align-items:flex-end;justify-content:space-between;
+    padding:0 26px 6px;font-size:14px;font-weight:600;position:relative;z-index:60;
+    flex:0 0 auto;
+  }
+  .statusbar .icons{display:flex;gap:5px;align-items:center;opacity:.95}
+  .statusbar svg{display:block}
+
+  .screen{
+    position:absolute;inset:0;display:none;flex-direction:column;background:var(--bg);
+  }
+  .screen.active{display:flex}
+  .scroll{flex:1;overflow-y:auto;padding:0 20px 28px;scrollbar-width:none}
+  .scroll::-webkit-scrollbar{display:none}
+
+  .navbar{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:2px 20px 12px;flex:0 0 auto;
+  }
+  .navbar .title{font-size:17px;font-weight:600;position:absolute;left:0;right:0;text-align:center;pointer-events:none}
+  .back{
+    width:32px;height:32px;border-radius:50%;background:var(--green);border:0;
+    display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:2
+  }
+  .back svg{width:14px;height:14px}
+  .navbar .right{width:32px;display:flex;justify-content:flex-end;gap:14px;z-index:2;color:var(--txt-2)}
+
+  .dots{display:flex;gap:6px;justify-content:center;margin:6px 0 20px}
+  .dots i{width:22px;height:4px;border-radius:2px;background:#243040;display:block}
+  .dots i.on{background:var(--cyan)}
+
+  /* ---------- Logo ---------- */
+  .dfc{display:flex;flex-direction:column;align-items:center;gap:6px;margin:4px 0 18px}
+  .dfc svg{display:block}
+  .dfc .cap{
+    font-size:9px;font-weight:800;font-style:italic;letter-spacing:.06em;color:var(--cyan);
+    text-align:center;line-height:1.25
+  }
+  .steppi{font-size:22px;font-weight:800;letter-spacing:.06em;display:inline-flex;align-items:center}
+  .steppi .e{color:var(--green);margin:0 1px}
+
+  /* ---------- Type ---------- */
+  h2.h{font-size:27px;font-weight:700;text-align:center;margin:0 0 8px;letter-spacing:-.02em}
+  p.sub{font-size:14px;color:var(--txt-2);text-align:center;margin:0 0 22px;line-height:1.45}
+  .eyebrow{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--cyan);text-align:center;margin-bottom:6px}
+  .foot{font-size:11.5px;color:var(--txt-3);text-align:center;line-height:1.5;margin-top:20px}
+
+  /* ---------- Cards / buttons ---------- */
+  .opt{
+    display:flex;align-items:center;gap:14px;width:100%;text-align:left;
+    background:var(--card);border:1px solid var(--line);border-radius:var(--r);
+    padding:16px;margin-bottom:12px;cursor:pointer;color:var(--txt);font-family:var(--font)
+  }
+  .opt:hover{border-color:#2C3A4C}
+  .opt .ic{width:30px;flex:0 0 30px;display:flex;align-items:center;justify-content:center;font-size:22px}
+  .opt .tx{flex:1}
+  .opt .tx b{display:block;font-size:16.5px;font-weight:650;margin-bottom:3px}
+  .opt .tx span{font-size:12.5px;color:var(--txt-2);line-height:1.4}
+  .opt .chev{color:var(--txt-3);font-size:20px}
+
+  .btn{
+    width:100%;border:0;border-radius:14px;padding:15px;font-size:16px;font-weight:600;
+    font-family:var(--font);cursor:pointer;background:var(--cyan);color:#00131C
+  }
+  .btn:disabled{background:#16222C;color:#3E4C5A;cursor:not-allowed}
+  .btn.green{background:var(--green);color:#062400}
+  .btn.ghost{background:transparent;color:var(--txt);border:1px solid var(--line)}
+  .btn.sm{padding:12px;font-size:14px}
+  .linkbtn{background:none;border:0;color:var(--cyan);font-size:13px;font-family:var(--font);cursor:pointer;padding:10px;display:block;margin:0 auto}
+  .linkbtn.muted{color:var(--txt-2)}
+
+  /* ---------- Code entry ---------- */
+  .codewrap{display:flex;gap:8px;justify-content:center;margin:6px 0 14px}
+  .codewrap .cell{
+    width:44px;height:52px;border:1px solid var(--line);border-radius:11px;background:var(--card);
+    display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:600
+  }
+  .codewrap .cell.fill{border-color:var(--cyan);color:var(--cyan)}
+  #codeInput{position:absolute;opacity:0;pointer-events:none}
+  .keypad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+  .keypad button{
+    background:var(--card);border:1px solid var(--line);border-radius:12px;color:#fff;
+    font-family:var(--font);font-size:19px;font-weight:600;padding:13px 0;cursor:pointer
+  }
+  .keypad button:active{background:#1B2430}
+
+  /* ---------- Info rows ---------- */
+  .rowcard{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px;margin-bottom:10px;display:flex;align-items:center;gap:14px}
+  .rowcard .ic{font-size:20px;width:26px;text-align:center}
+  .rowcard .lab{font-size:11.5px;color:var(--txt-2);margin-bottom:2px}
+  .rowcard .val{font-size:17px;font-weight:650}
+
+  .listcard{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px;margin-bottom:16px}
+  .listcard .head{font-size:12px;color:var(--txt-2);margin-bottom:12px}
+  .listcard .item{display:flex;gap:13px;align-items:flex-start;margin-bottom:14px}
+  .listcard .item:last-child{margin-bottom:0}
+  .listcard .item .ic{font-size:19px;width:24px;text-align:center}
+  .listcard .item b{display:block;font-size:15.5px;font-weight:650;margin-bottom:2px}
+  .listcard .item span{font-size:12px;color:var(--txt-2);line-height:1.4}
+
+  /* ---------- Scorecard ---------- */
+  .tabs{display:flex;gap:0;border:1px solid var(--cyan-dim);border-radius:11px;overflow:hidden;margin-bottom:16px}
+  .tabs button{
+    flex:1;background:transparent;border:0;color:var(--txt-2);font-family:var(--font);
+    font-size:13.5px;font-weight:600;padding:10px 0;cursor:pointer
+  }
+  .tabs button.on{background:var(--green);color:#062400}
+
+  .userrow{display:flex;align-items:center;gap:11px;margin-bottom:16px}
+  .avatar{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#2C4A63,#7FA8C4);flex:0 0 38px;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:#06121B}
+  .userrow .who{flex:1}
+  .userrow .who .lab{font-size:11px;color:var(--txt-2)}
+  .userrow .who .nm{font-size:17px;font-weight:650}
+  .addbtn{display:flex;align-items:center;gap:7px;background:transparent;border:0;color:var(--cyan);font-family:var(--font);font-size:12px;cursor:pointer;text-align:left}
+  .addbtn .plus{width:30px;height:30px;border-radius:50%;border:1.5px solid var(--cyan);display:flex;align-items:center;justify-content:center;font-size:16px}
+
+  .seclab{font-size:11.5px;color:var(--txt-2);margin:0 0 8px}
+  .tiles{display:flex;gap:9px;margin-bottom:16px}
+  .tile{flex:1;background:var(--card);border:1px solid var(--line);border-radius:13px;padding:11px 9px;text-align:left}
+  .tile .n{font-size:17px;font-weight:700;line-height:1.1}
+  .tile .l{font-size:10.5px;color:var(--txt-2);margin-top:2px}
+  .tile .ic{font-size:14px;margin-bottom:5px;display:block}
+
+  .goalcard{border:1px solid var(--green-dim);border-radius:var(--r);padding:15px;margin-bottom:18px;background:linear-gradient(180deg,rgba(124,255,30,.05),rgba(0,0,0,0))}
+  .goalcard .hd{font-size:14.5px;font-weight:700;color:var(--green);margin-bottom:5px}
+  .goalcard .bd{font-size:12.5px;color:var(--txt-2);line-height:1.45;margin-bottom:13px}
+  .goalcard .gl{font-size:11.5px;color:var(--txt-2);margin-bottom:8px}
+  .goalrow{display:flex;align-items:center;gap:9px;margin-bottom:13px}
+  .goalrow .g{flex:1;background:var(--card-2);border:1px solid var(--line);border-radius:12px;padding:11px 12px}
+  .goalrow .g .n{font-size:15.5px;font-weight:700}
+  .goalrow .g .l{font-size:10.5px;color:var(--txt-2);margin-top:1px}
+  .goalrow .or{font-size:11.5px;color:var(--txt-3);font-weight:600}
+  .goalcard .btns{display:flex;gap:9px}
+  .goalcard .btns button{flex:1}
+
+  .trackcard{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:15px}
+  .trackhd{display:flex;align-items:center;justify-content:space-between;margin-bottom:13px}
+  .trackhd .t{font-size:15px;font-weight:700;color:var(--cyan);display:flex;align-items:center;gap:6px}
+  .info{width:15px;height:15px;border-radius:50%;border:1px solid var(--txt-3);color:var(--txt-3);font-size:9.5px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;background:none;font-family:var(--font)}
+  .pill{border:1px solid var(--green);color:var(--green);background:none;border-radius:20px;font-size:11.5px;padding:5px 11px;font-family:var(--font);cursor:pointer}
+  .statline{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:7px}
+  .statline .l{font-size:14px;font-weight:600}
+  .statline .v{font-size:16px;font-weight:700;color:var(--cyan)}
+  .statline .v small{color:var(--txt-2);font-weight:600;font-size:12px}
+  .bar{height:5px;border-radius:3px;background:#1A222C;overflow:hidden;margin-bottom:9px}
+  .bar i{display:block;height:100%;background:linear-gradient(90deg,var(--cyan),var(--green));border-radius:3px;transition:width .5s ease}
+  .hint{font-size:10.5px;color:var(--txt-3);margin-bottom:14px}
+
+  .grid30{display:grid;grid-template-columns:repeat(5,1fr);gap:12px 9px}
+  .day{
+    background:none;border:0;padding:0;font-family:var(--font);cursor:default;
+    display:flex;flex-direction:column;align-items:center;gap:4px
+  }
+  .day .lbl{font-size:9px;font-weight:600;color:#3B4857;letter-spacing:.01em;line-height:1}
+  .day .circ{
+    width:100%;aspect-ratio:1;border-radius:50%;border:1px solid #22303F;
+    display:flex;align-items:center;justify-content:center;
+    font-size:13.5px;font-weight:600;color:#3B4857
+  }
+  .day .circ svg{width:100%;height:100%;display:block}
+  .day.done{cursor:pointer}
+  .day.done .lbl{color:var(--green)}
+  .day.done .circ{border:0}
+  .day.done:hover .circ{transform:scale(1.06);transition:.15s}
+  .day.today .lbl{color:var(--cyan)}
+  .day.today .circ{border-color:var(--cyan);color:var(--cyan)}
+
+  /* ---------- Leaderboard ---------- */
+  .orgcard{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:15px;margin-bottom:14px}
+  .orgtop{display:flex;align-items:flex-start;gap:11px;margin-bottom:14px}
+  .orgtop .ic{font-size:21px}
+  .orgtop .nm{flex:1}
+  .orgtop .nm .l{font-size:11px;color:var(--txt-2)}
+  .orgtop .nm .v{font-size:16.5px;font-weight:650;line-height:1.25}
+  .orgtop .pos{text-align:right}
+  .orgtop .pos .v{font-size:22px;font-weight:700;color:var(--green);line-height:1}
+  .orgtop .pos .l{font-size:10px;color:var(--txt-2)}
+  .scorewrap{display:flex;align-items:center;gap:15px}
+  .ring{width:82px;height:82px;flex:0 0 82px;position:relative}
+  .ring .num{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+  .ring .num b{font-size:24px;font-weight:800;color:var(--green);line-height:1}
+  .ring .num s{font-size:10px;color:var(--txt-2);text-decoration:none}
+  .ringlab{font-size:9.5px;color:var(--txt-2);text-align:center;margin-top:4px;letter-spacing:.04em}
+  .subscores{flex:1}
+  .subscores .s{margin-bottom:11px}
+  .subscores .s:last-child{margin-bottom:0}
+  .subscores .r{display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:5px}
+  .subscores .r b{font-size:14px;font-weight:700}
+  .minibar{height:5px;border-radius:3px;background:#1A222C;overflow:hidden}
+  .minibar i{display:block;height:100%;border-radius:3px}
+
+  .toggle{display:flex;gap:9px;margin-bottom:16px}
+  .toggle button{flex:1;border-radius:11px;border:1px solid var(--line);background:var(--card);color:var(--txt-2);font-family:var(--font);font-size:13.5px;font-weight:600;padding:11px 0;cursor:pointer}
+  .toggle button.on{background:var(--green);border-color:var(--green);color:#062400}
+  #tgTeam.on,#fgTeam.on{background:var(--cyan);border-color:var(--cyan);color:#00131C}
+
+  .lbhead{display:flex;align-items:center;justify-content:space-between;margin-bottom:11px}
+  .lbhead h3{font-size:16px;font-weight:700;margin:0}
+  .lbrow{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:13px;padding:13px 15px;margin-bottom:9px;cursor:pointer}
+  .lbrow .rk{width:24px;text-align:center;font-size:16px}
+  .lbrow .nm{flex:1;font-size:15px;font-weight:600}
+  .lbrow .sc{text-align:right}
+  .lbrow .sc b{font-size:17px;font-weight:700;color:var(--green);display:block;line-height:1.1}
+  .lbrow .sc s{font-size:10px;color:var(--txt-2);text-decoration:none}
+  .lbrow.pod1{border-color:#F5C33B;background:linear-gradient(90deg,rgba(245,195,59,.10),rgba(0,0,0,0))}
+  .lbrow.pod2{border-color:#C3CFDD;background:linear-gradient(90deg,rgba(195,207,221,.08),rgba(0,0,0,0))}
+  .lbrow.pod3{border-color:#D2823A;background:linear-gradient(90deg,rgba(210,130,58,.09),rgba(0,0,0,0))}
+
+  /* ---------- Profile ---------- */
+  .daycard{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px;margin-bottom:11px}
+  .daycard .hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:11px}
+  .daycard .hd b{font-size:15.5px;font-weight:700}
+  .daycard .hd span{font-size:12px;color:var(--txt-2)}
+  .cheer{display:flex;align-items:center;gap:5px;background:none;border:0;color:var(--green);font-family:var(--font);font-size:11px;font-weight:600;cursor:pointer;flex-direction:column}
+  .cheer .ic{font-size:19px}
+
+  /* ---------- Add workout ---------- */
+  .search{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:13px;padding:13px 15px;margin-bottom:16px}
+  .search input{flex:1;background:none;border:0;color:#fff;font-family:var(--font);font-size:15px;outline:none}
+  .search input::placeholder{color:var(--txt-3)}
+  .actrow{display:flex;align-items:center;gap:13px;background:var(--card);border:1px solid var(--line);border-radius:13px;padding:13px 15px;margin-bottom:9px;cursor:pointer;width:100%;text-align:left;color:#fff;font-family:var(--font)}
+  .actrow.on{border-color:var(--cyan)}
+  .actrow .ic{font-size:19px}
+  .actrow .nm{flex:1;font-size:15px;font-weight:600}
+
+  /* ---------- Sheets / modals ---------- */
+  .overlay{position:absolute;inset:0;background:rgba(0,0,0,.72);backdrop-filter:blur(2px);z-index:80;display:none;align-items:center;justify-content:center;padding:20px}
+  .overlay.active{display:flex}
+  .sheet{width:100%;max-height:92%;overflow-y:auto;background:#05080C;border:1px solid var(--line);border-radius:22px;padding:22px 20px;scrollbar-width:none}
+  .sheet::-webkit-scrollbar{display:none}
+  .sheet .x{position:absolute;top:16px;right:18px;width:30px;height:30px;border-radius:50%;background:#1C242E;border:0;color:#fff;font-size:16px;cursor:pointer;z-index:5}
+  .chips{display:flex;gap:9px;margin-bottom:18px}
+  .chips button{flex:1;background:var(--card);border:1px solid var(--line);border-radius:12px;color:#fff;font-family:var(--font);font-size:14px;font-weight:600;padding:12px 0;cursor:pointer}
+  .chips button.on{border-color:var(--cyan);color:var(--cyan)}
+  .fieldlab{font-size:13px;font-weight:600;margin-bottom:8px}
+  .minfield{width:100%;background:var(--card-2);border:1px solid var(--line);border-radius:12px;padding:13px 15px;color:#fff;font-family:var(--font);font-size:15px;outline:none;margin-bottom:18px}
+  .minfield::placeholder{color:var(--txt-3)}
+  .dateopt{width:100%;background:var(--card);border:1px solid var(--line);border-radius:12px;color:#fff;font-family:var(--font);font-size:14.5px;padding:13px 0;margin-bottom:9px;cursor:pointer}
+  .dateopt.on{border-color:var(--cyan);color:var(--cyan)}
+
+  .cal{background:var(--card);border:1px solid var(--line);border-radius:15px;padding:14px;margin-bottom:16px}
+  .calhd{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+  .calhd .m{font-size:14.5px;font-weight:600}
+  .calhd button{width:29px;height:29px;border-radius:8px;background:#1C242E;border:0;color:#fff;cursor:pointer}
+  .calgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center}
+  .calgrid .dow{font-size:11px;color:var(--txt-2);padding:5px 0}
+  .calgrid button{
+    aspect-ratio:1;border-radius:9px;border:0;background:none;color:#fff;
+    font-family:var(--font);font-size:13.5px;cursor:pointer;display:flex;align-items:center;justify-content:center
+  }
+  .calgrid button.off{color:#2B3644;cursor:not-allowed}
+  .calgrid button.sel{background:var(--cyan);color:#00131C;font-weight:700}
+  .calgrid button.has::after{content:'';position:absolute;width:4px;height:4px;border-radius:50%;background:var(--green);transform:translateY(13px)}
+  .calgrid button{position:relative}
+
+  /* ---------- Badge cards ---------- */
+  .badgecard{
+    background:#05080C;border:1.5px solid var(--cyan);border-radius:20px;padding:22px 18px;text-align:center;
+    background-image:radial-gradient(120% 60% at 50% 0%,rgba(0,183,255,.10),transparent 70%)
+  }
+  .badgecard.gold{border-color:var(--gold);background-image:radial-gradient(120% 60% at 50% 0%,rgba(245,195,59,.12),transparent 70%)}
+  .badgecard .dayline{font-size:31px;font-weight:800;font-style:italic;color:var(--green);letter-spacing:-.01em;line-height:1.05}
+  .badgecard .finline{font-size:31px;font-weight:800;font-style:italic;color:#fff;letter-spacing:-.01em;margin-bottom:14px;line-height:1.05}
+  .badgecard .person{display:flex;align-items:center;justify-content:center;gap:9px;margin-bottom:14px}
+  .badgecard .person .nm{font-size:16px;font-weight:600}
+  .badgecard .claim{border:1px solid var(--cyan);border-radius:11px;padding:10px;font-size:12.5px;color:var(--txt-2);margin-bottom:14px;line-height:1.5}
+  .badgecard .claim b{color:var(--green)}
+  .badgecard .hook{font-size:13px;color:var(--green);margin-bottom:14px}
+  .badgecard .cta{font-size:11.5px;color:var(--txt-2);margin-top:6px;line-height:1.4}
+  .badgecard .tag{font-size:11px;color:var(--txt-3);margin-top:9px}
+  .sharegrid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:14px}
+  .sharegrid button{
+    background:var(--card);border:1px solid var(--line);border-radius:11px;color:#fff;
+    font-family:var(--font);font-size:10.5px;padding:11px 4px;cursor:pointer;display:flex;
+    flex-direction:column;align-items:center;gap:5px
+  }
+  .sharegrid button .ic{font-size:15px}
+
+  .podrow{display:flex;align-items:center;gap:12px;border:1px solid var(--line);border-radius:13px;padding:12px 14px;margin-bottom:9px;background:var(--card)}
+  .podrow.first{border-color:var(--gold)}
+  .podrow .rk{width:25px;height:25px;border-radius:50%;border:1px solid var(--gold);color:var(--gold);font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center}
+  .podrow .nm{flex:1;font-size:14.5px;font-weight:600;text-align:left}
+  .podrow .sc b{font-size:16px;font-weight:800;color:var(--gold);display:block;line-height:1.1}
+  .podrow .sc s{font-size:9.5px;color:var(--txt-2);text-decoration:none}
+
+  /* ---------- Toast ---------- */
+  .toast{
+    position:absolute;left:16px;right:16px;top:62px;background:var(--cyan);color:#00131C;
+    border-radius:13px;padding:13px 16px;font-size:13.5px;font-weight:600;text-align:center;
+    z-index:95;opacity:0;transform:translateY(-10px);transition:.28s ease;pointer-events:none
+  }
+  .toast.show{opacity:1;transform:translateY(0)}
+
+  /* ---------- Tab bar ---------- */
+  .tabbar{
+    display:flex;border-top:1px solid var(--line-soft);padding:9px 0 26px;flex:0 0 auto;background:var(--bg)
+  }
+  .tabbar button{
+    flex:1;background:none;border:0;color:var(--txt-3);font-family:var(--font);font-size:10px;
+    display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer
+  }
+  .tabbar button .ic{font-size:17px}
+  .tabbar button.on{color:var(--green)}
+
+  .ncard{background:var(--navy-2);border:1px solid #3C4569;border-radius:15px;padding:15px;margin-bottom:16px}
+  .rwd{flex:1;border-radius:11px;padding:11px 3px;text-align:center;font-size:8px;font-weight:800;color:#0B1420;letter-spacing:.02em;display:flex;flex-direction:column;align-items:center;gap:5px}
+  .rwd span{font-size:16px}
+
+  .rules h3{font-size:16px;font-weight:700;color:var(--green);margin:20px 0 8px}
+  .rules h3:first-child{margin-top:0}
+  .rules ul{margin:0;padding:0 0 0 17px}
+  .rules li{font-size:13.5px;color:#D6DDE5;line-height:1.55;margin-bottom:8px;text-align:left}
+  .rules li::marker{color:var(--green)}
+  .rules b{color:#fff}
+
+  .pulserow{display:flex;align-items:center;gap:12px;margin-bottom:13px}
+  .pulserow .rk{width:18px;font-size:12px;color:var(--txt-3)}
+  .pulserow .bd{flex:1}
+  .pulserow .top{display:flex;justify-content:space-between;font-size:13.5px;margin-bottom:5px}
+  .pulserow .top s{color:var(--txt-2);text-decoration:none;font-size:12px}
+
+  .note{
+    font-size:10.5px;color:var(--txt-3);background:#0C1015;border:1px dashed #232C38;
+    border-radius:10px;padding:9px 11px;margin-top:14px;line-height:1.5
+  }
+
+  /* ---------- Mobile: full-bleed app, rail becomes a drawer ---------- */
+  .railBtn{
+    display:none;position:fixed;z-index:210;right:12px;
+    bottom:calc(env(safe-area-inset-bottom,0px) + 12px);
+    width:44px;height:44px;border-radius:50%;border:1px solid #2C3644;
+    background:rgba(12,16,22,.86);backdrop-filter:blur(6px);color:#fff;
+    font-size:17px;cursor:pointer;align-items:center;justify-content:center
+  }
+  .scrim{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:190}
+  .scrim.open{display:block}
+
+  @media (max-width:900px){
+    body{display:block;padding:0;background:#000}
+    .stage{gap:0}
+    .phone{
+      width:100vw;height:100dvh;min-height:100vh;border-radius:0;box-shadow:none
+    }
+    .statusbar{height:calc(env(safe-area-inset-top,0px) + 26px)}
+    .tabbar{padding-bottom:calc(env(safe-area-inset-bottom,0px) + 10px)}
+    .caption{display:none}
+    .railBtn{display:flex}
+    .rail{
+      position:fixed;top:0;left:0;bottom:0;width:252px;max-width:82vw;z-index:200;
+      border-radius:0;border:0;border-right:1px solid #1B2029;overflow-y:auto;
+      transform:translateX(-102%);transition:transform .24s ease;
+      padding-top:calc(env(safe-area-inset-top,0px) + 14px)
+    }
+    .rail.open{transform:none}
+    .rail button{padding:9px 8px;font-size:12.5px}
+    .rail .phbtn{padding:9px}
+  }
+  @media (max-width:900px) and (display-mode:standalone){
+    .statusbar{display:none}
+  }
+</style>
+</head>
+<body>
+
+<div class="scrim" id="scrim" onclick="toggleRail(false)"></div>
+<button class="railBtn" id="railBtn" onclick="toggleRail()" aria-label="Screens">☰</button>
+
+<div class="rail" id="rail">
+  <h1>STEPPI × DFC 2026</h1>
+  <p>Clickable prototype. Final copy applied. Jump to any screen, or tap through from the start.</p>
+
+  <div class="grp">App entry</div>
+  <button onclick="go('splash')">Splash</button>
+  <button onclick="go('home')">Home</button>
+  <button onclick="go('challenges')">Challenge page</button>
+
+  <div class="grp">Join flow</div>
+  <button onclick="go('join-how')">1 · How are you joining</button>
+  <button onclick="go('join-code')">2 · Organisation code</button>
+  <button onclick="go('join-confirm')">3 · Confirm organisation</button>
+  <button onclick="go('join-community')">4 · Community</button>
+  <button onclick="go('join-done')">5 · You're in</button>
+
+  <div class="grp">Main app</div>
+  <button onclick="go('scorecard')">Scorecard</button>
+  <button onclick="go('info')">Info</button>
+  <button onclick="go('rules')">Rules (placeholder)</button>
+  <button onclick="go('pulse')">City Pulse</button>
+  <button onclick="openModal('m-how')">How day badges work</button>
+  <button onclick="go('leaderboard')">Leaderboard</button>
+  <button onclick="go('lb-full')">Full leaderboard</button>
+  <button onclick="go('profile')">Individual profile</button>
+
+  <div class="grp">Add workout</div>
+  <button onclick="go('add-search')">Activity search</button>
+  <button onclick="openModal('m-duration')">Duration</button>
+  <button onclick="openModal('m-calendar')">Date picker</button>
+
+  <div class="grp">Badges &amp; share</div>
+  <button onclick="showDayBadge(1)">Day badge</button>
+  <button onclick="openModal('m-finisher')">DFC Finisher badge</button>
+  <button onclick="openModal('m-teamchamps')">We are all champions</button>
+
+  <div class="grp">Challenge state</div>
+  <button class="phbtn" id="ph-day1" onclick="setPhase('day1')">🌅 Day 1 — nothing logged</button>
+  <button class="phbtn" id="ph-live" onclick="setPhase('live')">▶ Live — day 15 of 30</button>
+  <button class="phbtn" id="ph-complete" onclick="setPhase('complete')">🏁 Complete — all 30 days</button>
+
+  <button class="reset" onclick="resetDemo()">Reset demo</button>
+</div>
+
+<div class="stage">
+<div class="phone" id="phone">
+
+  <!-- ============ 0a. SPLASH ============ -->
+  <div class="screen active" id="splash" style="background:#2B3453;justify-content:center;align-items:center;cursor:pointer" onclick="go('home')">
+    <div style="display:flex;flex-direction:column;align-items:center">
+      <div class="dfc" id="logoSplash" style="margin-bottom:6px"></div>
+      <div style="width:150px;height:1px;background:rgba(255,255,255,.5);margin:20px 0 18px"></div>
+      <div class="steppi" style="font-size:34px">ST<span class="e">≡</span>PPI</div>
+    </div>
+    <div style="position:absolute;bottom:46px;font-size:11px;color:rgba(255,255,255,.35)">Tap to continue</div>
+  </div>
+
+  <!-- ============ 0b. HOME ============ -->
+  <div class="screen" id="home" style="background:var(--navy)">
+    <div class="statusbar"><span>1:41</span><span class="icons">▮▮▮ ᯤ ▰</span></div>
+    <div style="display:flex;align-items:center;justify-content:center;position:relative;padding:2px 20px 12px">
+      <div class="steppi" style="font-size:23px">ST<span class="e">≡</span>PPI</div>
+      <span style="position:absolute;right:20px;font-size:17px">🔔</span>
+    </div>
+    <div style="background:var(--teal);color:#06342A;display:flex;align-items:center;justify-content:center;gap:14px;padding:9px">
+      <b style="font-size:18px">826,441</b>
+      <span style="background:#12403A;color:var(--teal);border-radius:7px;padding:5px 11px;font-size:12px;font-weight:700;letter-spacing:.03em">STEPS WALLET</span>
+    </div>
+    <div class="scroll" style="padding-top:14px">
+      <div class="ncard">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:6px">
+          <div>
+            <div style="font-size:19px;font-weight:700;color:var(--teal)" id="homeDay">Sunday</div>
+            <div style="font-size:13px;color:var(--teal);opacity:.8" id="homeDate">15 Nov, 2026</div>
+          </div>
+          <button style="border:1px solid var(--teal);color:var(--teal);background:none;border-radius:9px;padding:8px 13px;font-family:var(--font);font-size:13px;cursor:pointer">Set Goal</button>
+        </div>
+        <div style="display:flex;justify-content:center;padding:6px 0 10px" id="homeRings"></div>
+        <div style="display:flex;text-align:center">
+          <div style="flex:1"><div style="font-size:15px">🏃</div><div style="font-size:11.5px;color:#8FB4FF">Steps</div><div style="font-size:15px;font-weight:700" id="homeSteps">6,240</div><div style="font-size:11px;color:var(--txt-3)">10,000</div></div>
+          <div style="flex:1"><div style="font-size:15px">🕐</div><div style="font-size:11.5px;color:#8FB4FF">Active</div><div style="font-size:15px;font-weight:700" id="homeActive">18</div><div style="font-size:11px;color:var(--txt-3)">30</div></div>
+          <div style="flex:1"><div style="font-size:15px">🔥</div><div style="font-size:11.5px;color:#8FB4FF">Calories</div><div style="font-size:15px;font-weight:700">412</div><div style="font-size:11px;color:var(--txt-3)">600</div></div>
+          <div style="flex:1"><div style="font-size:15px">📍</div><div style="font-size:11.5px;color:#8FB4FF">Distance</div><div style="font-size:15px;font-weight:700">4.1</div><div style="font-size:11px;color:var(--txt-3)">7.0</div></div>
+        </div>
+      </div>
+
+      <button style="width:100%;background:#000;border:0;border-radius:13px;padding:15px;display:flex;align-items:center;justify-content:center;gap:14px;cursor:pointer;margin-bottom:18px" onclick="go('challenges')">
+        <span id="logoBanner"></span>
+        <span style="font-size:17px;font-weight:800;font-style:italic;color:var(--cyan);text-align:left;line-height:1.15">DUBAI FITNESS<br>CHALLENGE</span>
+      </button>
+
+      <div style="font-size:17px;font-weight:800;letter-spacing:.02em;margin-bottom:11px">REWARDS</div>
+      <div style="display:flex;gap:8px;margin-bottom:16px">
+        <div class="rwd" style="background:#2FE8C0"><span>🏅</span>FEATURED</div>
+        <div class="rwd" style="background:#F5C93B"><span>★</span>FAVOURITES</div>
+        <div class="rwd" style="background:#C77BF0"><span>👟</span>GEAR</div>
+        <div class="rwd" style="background:#F0A23B"><span>🏋️</span>FITNESS</div>
+        <div class="rwd" style="background:#7FA8E8"><span>🧘</span>WELLNESS</div>
+      </div>
+
+      <div style="font-size:14px;margin-bottom:10px">Go Sport — 15% off purchases</div>
+      <div class="ncard" style="padding:14px">
+        <div style="background:linear-gradient(135deg,#0E7FA8,#1BB9C9);border-radius:11px;padding:22px 16px;text-align:center">
+          <div class="steppi" style="font-size:15px;justify-content:center">ST<span class="e">≡</span>PPI</div>
+          <div style="font-size:34px;font-weight:800;margin:14px 0 2px">GO</div>
+          <div style="font-size:12px;letter-spacing:.4em">SPORT</div>
+          <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-top:20px;font-size:10px;letter-spacing:.06em">
+            <div style="text-align:left"><div style="border-bottom:1px solid rgba(255,255,255,.6);padding-bottom:3px;margin-bottom:3px">MOVE</div>REWARD PARTNER</div>
+            <div>🛍️ INSTORE</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:9px;margin-top:13px">
+          <div style="flex:1;background:var(--teal);color:#06342A;border-radius:10px;padding:11px;text-align:center;font-size:13.5px;font-weight:700">🚶 10,000 Steps</div>
+          <div style="flex:1;border:1px solid var(--teal);color:var(--teal);border-radius:10px;padding:11px;text-align:center;font-size:13.5px;font-weight:700">💰 AED 100 <span style="font-weight:400">Savings</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="tabbar" style="background:var(--navy);border-color:#37416A">
+      <button class="on" style="color:var(--teal)"><span class="ic">🏠</span>Home</button>
+      <button><span class="ic">🎁</span>Rewards</button>
+      <button onclick="go('challenges')"><span class="ic">🏆</span>Challenges</button>
+      <button><span class="ic">👤</span>Profile</button>
+    </div>
+  </div>
+
+  <!-- ============ 0c. CHALLENGES ============ -->
+  <div class="screen" id="challenges" style="background:#1B2138">
+    <div class="statusbar"><span>1:41</span><span class="icons">▮▮▮ ᯤ ▰</span></div>
+    <div style="display:flex;align-items:center;justify-content:center;position:relative;padding:2px 20px 14px">
+      <div class="steppi" style="font-size:23px">ST<span class="e">≡</span>PPI</div>
+      <span style="position:absolute;right:20px;font-size:17px">🔔</span>
+    </div>
+    <div style="display:flex;border-bottom:1px solid #2C3554">
+      <button style="flex:1;background:none;border:0;border-bottom:2px solid var(--teal);color:var(--teal);font-family:var(--font);font-size:14.5px;font-weight:600;padding:12px 0;cursor:pointer">STEPPI Challenges</button>
+      <button style="flex:1;background:none;border:0;color:var(--txt-2);font-family:var(--font);font-size:14.5px;padding:12px 0;cursor:pointer">My Challenges</button>
+    </div>
+    <div class="scroll" style="padding-top:16px">
+      <div style="border:1px solid #3D6BE8;border-radius:15px;padding:15px;background:#212844">
+        <div style="display:flex;align-items:center;gap:11px;margin-bottom:13px">
+          <span style="width:34px;flex:0 0 34px;background:#000;border-radius:9px;padding:3px;display:flex" id="logoChal"></span>
+          <b style="flex:1;font-size:15.5px;font-weight:700">Track your 30x30</b>
+          <span style="font-size:12.5px;color:var(--teal)" id="chalStatus">Ongoing</span>
+        </div>
+
+        <div style="background:#000;border-radius:11px;padding:24px;display:flex;align-items:center;justify-content:center;gap:14px;margin-bottom:13px">
+          <span id="logoChalBig"></span>
+          <span style="font-size:16px;font-weight:800;font-style:italic;color:var(--cyan);line-height:1.15">DUBAI FITNESS<br>CHALLENGE</span>
+        </div>
+
+        <div style="display:inline-flex;align-items:center;gap:6px;background:#5C79D8;border-radius:9px;padding:7px 12px;font-size:12.5px;margin-bottom:15px">👥 Fitness Challenge</div>
+
+        <div style="font-size:15px;font-weight:700;color:var(--teal);margin-bottom:9px">Description</div>
+        <div style="font-size:13.5px;color:#D6DDE5;line-height:1.55">
+          <p style="margin:0 0 11px">Track your 30x30 during this year's Dubai Fitness Challenge with STEPPI.</p>
+          <p style="margin:0 0 11px">Have fun and get active wherever you are. Every day you hit either 30 active minutes or 10,000 steps counts on your scorecard.</p>
+          <p style="margin:0 0 16px">Each day you hit a goal earns a Day Finisher badge. Can you collect all 30?</p>
+        </div>
+
+        <button class="btn" style="background:var(--teal);color:#06342A;font-weight:700;letter-spacing:.04em" onclick="go('join-how')">JOIN</button>
+      </div>
+      <div class="note">Challenge title shortened from "DFC TRACK YOUR 30×30"; description corrected — badges are per-day for either goal, not streaks.</div>
+    </div>
+    <div class="tabbar" style="background:#1B2138;border-color:#2C3554">
+      <button onclick="go('home')"><span class="ic">🏠</span>Home</button>
+      <button><span class="ic">🎁</span>Rewards</button>
+      <button class="on" style="color:var(--teal)"><span class="ic">🏆</span>Challenges</button>
+      <button><span class="ic">👤</span>Profile</button>
+    </div>
+  </div>
+
+  <!-- ============ 1. HOW ARE YOU JOINING ============ -->
+  <div class="screen" id="join-how">
+    <div class="statusbar"><span>1:41</span><span class="icons">▮▮▮ ᯤ ▰</span></div>
+    <div class="navbar">
+      <button class="back" onclick="back()"><svg viewBox="0 0 24 24" fill="none" stroke="#062400" stroke-width="3"><path d="M15 18l-6-6 6-6"/></svg></button>
+      <div class="title">Join the Challenge</div>
+      <div class="right"></div>
+    </div>
+    <div class="scroll">
+      <div class="dots"><i class="on"></i><i></i><i></i><i></i></div>
+      <div class="dfc" id="logo1"></div>
+      <h2 class="h">How are you joining?</h2>
+      <p class="sub">So we can put you on the right leaderboard</p>
+
+      <button class="opt" onclick="state.joinType='org';go('join-code')">
+        <span class="ic">🏛️</span>
+        <span class="tx"><b>With my organisation</b><span>You'll need a code from your workplace</span></span>
+        <span class="chev">›</span>
+      </button>
+      <button class="opt" onclick="state.joinType='individual';go('join-community')">
+        <span class="ic">🏃</span>
+        <span class="tx"><b>On my own</b><span>Track your 30x30 progress solo</span></span>
+        <span class="chev">›</span>
+      </button>
+
+      <button class="linkbtn" onclick="state.joinType='individual';go('join-community')">No code? Join on your own — you can add your organisation later</button>
+
+      <p class="foot">We only use your data to power the DFC leaderboard and City Pulse dashboard</p>
+    </div>
+  </div>
+
+  <!-- ============ 2. CODE ============ -->
+  <div class="screen" id="join-code">
+    <div class="statusbar"><span>1:41</span><span class="icons">▮▮▮ ᯤ ▰</span></div>
+    <div class="navbar">
+      <button class="back" onclick="back()"><svg viewBox="0 0 24 24" fill="none" stroke="#062400" stroke-width="3"><path d="M15 18l-6-6 6-6"/></svg></button>
+      <div class="title">Join the Challenge</div>
+      <div class="right"></div>
+    </div>
+    <div class="scroll">
+      <div class="dots" id="codeDots"><i class="on"></i><i class="on"></i><i></i><i></i></div>
+      <div class="dfc" id="logo2"></div>
+      <h2 class="h" id="codeTitle">Enter your organisation code</h2>
+      <p class="sub" id="codeSub">Your employer will have shared a 6-character code</p>
+
+      <div class="codewrap" id="codeCells"></div>
+      <div id="codeErr" style="display:none;font-size:12px;color:#FF6B6B;text-align:center;margin-bottom:10px">That code doesn't look right — check it with your organiser</div>
+      <button class="linkbtn" id="codeAlt" onclick="codeAltAction()">No code? Join on your own</button>
+
+      <div class="keypad" id="keypad"></div>
+
+      <div style="margin-top:16px">
+        <button class="btn" id="codeBtn" disabled onclick="submitCode()">Continue</button>
+      </div>
+      <div class="note">Try <b>G12345</b> to continue, or any other code to see the error state.</div>
+    </div>
+    <div class="tabbar" id="codeTabbar" style="display:none">
+      <button><span class="ic">🏠</span>Home</button>
+      <button><span class="ic">🎁</span>Rewards</button>
+      <button class="on"><span class="ic">🏆</span>Challenges</button>
+      <button><span class="ic">👤</span>Profile</button>
+    </div>
+  </div>
+
+  <!-- ============ 3. CONFIRM ORG ============ -->
+  <div class="screen" id="join-confirm">
+    <div class="statusbar"><span>1:41</span><span class="icons">▮▮▮ ᯤ ▰</span></div>
+    <div class="navbar">
+      <button class="back" onclick="back()"><svg viewBox="0 0 24 24" fill="none" stroke="#062400" stroke-width="3"><path d="M15 18l-6-6 6-6"/></svg></button>
+      <div class="title">Join the Challenge</div>
+      <div class="right"></div>
+    </div>
+    <div class="scroll">
+      <div class="dots"><i class="on"></i><i class="on"></i><i class="on"></i><i></i></div>
+      <div class="dfc" id="logo3"></div>
+      <div class="eyebrow">Government</div>
+      <h2 class="h" style="font-size:24px">Dubai Economy and Tourism</h2>
+      <div style="height:14px"></div>
+
+      <div class="listcard">
+        <div class="head">You'll be added to</div>
+        <div class="item"><span class="ic">🏛️</span><div><b>Government leaderboard</b><span>Compete with other government entities</span></div></div>
+        <div class="item"><span class="ic">👥</span><div><b>Your team's leaderboard</b><span>See how you stack up against colleagues</span></div></div>
+      </div>
+
+      <button class="btn" onclick="go('join-community')">Yes, that's us</button>
+      <button class="linkbtn muted" onclick="back()">Enter a different code</button>
+      <div class="note">Org name renders exactly as stored — no auto title-casing, so "and" stays lowercase.</div>
+    </div>
+  </div>
+
+  <!-- ============ 4. COMMUNITY ============ -->
+  <div class="screen" id="join-community">
+    <div class="statusbar"><span>1:41</span><span class="icons">▮▮▮ ᯤ ▰</span></div>
+    <div class="navbar">
+      <button class="back" onclick="back()"><svg viewBox="0 0 24 24" fill="none" stroke="#062400" stroke-width="3"><path d="M15 18l-6-6 6-6"/></svg></button>
+      <div class="title">Join the Challenge</div>
+      <div class="right"></div>
+    </div>
+    <div class="scroll">
+      <div class="dots"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></div>
+      <div class="dfc" id="logo4"></div>
+      <h2 class="h">Which community are you in?</h2>
+      <p class="sub">Your steps will count towards your community on the City Pulse heatmap</p>
+
+      <div class="search">
+        <span>🔍</span><input id="commSearch" placeholder="Search communities" oninput="renderCommunities()">
+      </div>
+      <div id="commList"></div>
+      <p class="foot">Community only — we never track your exact location</p>
+    </div>
+    <div style="padding:0 20px 24px">
+      <button class="btn" id="commBtn" disabled onclick="go('join-done')">Continue</button>
+    </div>
+  </div>
+
+  <!-- ============ 5. YOU'RE IN ============ -->
+  <div class="screen" id="join-done">
+    <div class="statusbar"><span>1:41</span><span class="icons">▮▮▮ ᯤ ▰</span></div>
+    <div class="navbar">
+      <button class="back" onclick="back()"><svg viewBox="0 0 24 24" fill="none" stroke="#062400" stroke-width="3"><path d="M15 18l-6-6 6-6"/></svg></button>
+      <div class="title">Join the Challenge</div>
+      <div class="right"></div>
+    </div>
+    <div class="scroll">
+      <div class="dfc" id="logo5"></div>
+      <h2 class="h">You're in!</h2>
+      <p class="sub">Welcome to the 10th Dubai Fitness Challenge</p>
+
+      <div class="rowcard"><span class="ic">👤</span><div><div class="lab">Participant</div><div class="val">Jessica Kodan</div></div></div>
+      <div class="rowcard" id="doneOrgRow"><span class="ic">🏛️</span><div><div class="lab">Organisation</div><div class="val" id="doneOrg">Dubai Economy and Tourism</div></div></div>
+      <div class="rowcard"><span class="ic">📍</span><div><div class="lab">Community</div><div class="val" id="doneComm">Al Qusais</div></div></div>
+      <div class="rowcard"><span class="ic">🏆</span><div><div class="lab">Leaderboards</div><div class="val" id="doneLb">Government + your team</div></div></div>
+    </div>
+    <div style="padding:0 20px 24px">
+      <button class="btn" onclick="go('scorecard')">Start my challenge</button>
+      <p class="foot" style="margin-top:10px">30 minutes a day for 30 days — you're on day 15</p>
+    </div>
+  </div>
+
+  <!-- ============ SCORECARD ============ -->
+  <div class="screen" id="scorecard">
+    <div class="statusbar"><span>1:41</span><span class="icons">▮▮▮ ᯤ ▰</span></div>
+    <div class="navbar">
+      <button class="back" onclick="back()"><svg viewBox="0 0 24 24" fill="none" stroke="#062400" stroke-width="3"><path d="M15 18l-6-6 6-6"/></svg></button>
+      <div class="title">Dubai Fitness Challenge</div>
+      <div class="right">⋮</div>
+    </div>
+    <div class="scroll">
+      <div class="tabs">
+        <button class="on">Scorecard</button>
+        <button onclick="openLeaderboard()">Leaderboard</button>
+        <button onclick="go('info')">Info</button>
+      </div>
+
+      <div class="userrow">
+        <div class="avatar">JK</div>
+        <div class="who"><div class="lab">You</div><div class="nm">Jessica Kodan</div></div>
+        <button class="addbtn" onclick="go('add-search')"><span class="plus">+</span>Add<br>workout</button>
+      </div>
+
+      <button id="finisherBanner" style="display:none;width:100%;align-items:center;gap:12px;background:linear-gradient(90deg,rgba(245,195,59,.14),rgba(124,255,30,.06));border:1px solid var(--gold);border-radius:14px;padding:13px 14px;margin-bottom:16px;cursor:pointer;font-family:var(--font);text-align:left;color:#fff"
+              onclick="openModal('m-finisher')">
+        <span style="font-size:26px">🏆</span>
+        <span style="flex:1">
+          <span style="display:block;font-size:14.5px;font-weight:700;color:var(--gold)">DFC Finisher unlocked</span>
+          <span style="display:block;font-size:12px;color:var(--txt-2);margin-top:2px">30 days done. Tap to open your badge and share it</span>
+        </span>
+        <span style="color:var(--gold);font-size:19px">›</span>
+      </button>
+
+      <div class="seclab">Today</div>
+      <div class="tiles">
+        <div class="tile"><span class="ic">👟</span><div class="n" id="tSteps">6,240</div><div class="l">Steps</div></div>
+        <div class="tile"><span class="ic">🔥</span><div class="n" id="tActive">18 min</div><div class="l">Active</div></div>
+        <div class="tile"><span class="ic">🏋️</span><div class="n" id="tWork">0 min</div><div class="l">Workout</div></div>
+      </div>
+      <div class="hint" id="zeroHint">Not there yet — a 10-minute walk would do it</div>
+
+      <div class="goalcard">
+        <div class="hd">Earn a badge every day</div>
+        <div class="bd">Hit either goal and that day's Day Finisher badge is yours — open it and share</div>
+        <div class="gl">Today's goals — hit either one</div>
+        <div class="goalrow">
+          <div class="g"><div class="n">10,000</div><div class="l">Steps</div></div>
+          <div class="or">or</div>
+          <div class="g"><div class="n">30 min</div><div class="l">Active or workout</div></div>
+        </div>
+        <div class="btns">
+          <button class="btn ghost sm" onclick="openModal('m-how')">How it works</button>
+          <button class="btn green sm" onclick="this.closest('.goalcard').style.display='none'">Got it</button>
+        </div>
+      </div>
+
+      <div class="trackcard">
+        <div class="trackhd">
+          <div class="t">Your 30x30 <button class="info" onclick="openModal('m-how')">i</button></div>
+          <button class="pill" onclick="go('profile')">See details ›</button>
+        </div>
+        <div class="statline">
+          <span class="l">Badges earned</span>
+          <span class="v"><span id="doneCount">14</span> <small>of 30</small></span>
+        </div>
+        <div class="bar"><i id="doneBar" style="width:46.6%"></i></div>
+        <div class="hint">Tap a completed day to open its badge</div>
+        <div class="grid30" id="grid30"></div>
+      </div>
+      <div class="note">Day 15 is today. Log a workout of 30+ min (or hit 10,000 steps) and today turns green — the badge fires automatically.</div>
+    </div>
+    <div class="tabbar">
+      <button><span class="ic">🏠</span>Home</button>
+      <button><span class="ic">🎁</span>Rewards</button>
+      <button class="on"><span class="ic">🏆</span>Challenges</button>
+      <button><span class="ic">👤</span>Profile</button>
+    </div>
+  </div>
+
+  <!-- ============ LEADERBOARD ============ -->
+  <div class="screen" id="leaderboard">
+    <div class="statusbar"><span>1:41</span><span class="icons">▮▮▮ ᯤ ▰</span></div>
+    <div class="navbar">
+      <button class="back" onclick="back()"><svg viewBox="0 0 24 24" fill="none" stroke="#062400" stroke-width="3"><path d="M15 18l-6-6 6-6"/></svg></button>
+      <div class="title">Leaderboard</div>
+      <div class="right">⋮</div>
+    </div>
+    <div class="scroll">
+      <div class="tabs">
+        <button onclick="go('scorecard')">Scorecard</button>
+        <button class="on">Leaderboard</button>
+        <button onclick="go('info')">Info</button>
+      </div>
+
+      <!-- End state: challenge complete -->
+      <div class="orgcard" id="completeCard" style="display:none;border-color:var(--gold);cursor:pointer" onclick="openModal('m-teamchamps')">
+        <div style="display:flex;align-items:center;gap:7px;font-size:12.5px;font-weight:700;color:var(--orange);margin-bottom:11px">
+          <span style="font-size:9px">●</span>Challenge complete
+        </div>
+        <div style="display:flex;align-items:center;gap:13px">
+          <span style="font-size:36px">🏆</span>
+          <div style="flex:1">
+            <div style="font-size:11px;color:var(--txt-2)">Government</div>
+            <div style="font-size:18px;font-weight:650;line-height:1.2">Dubai Economy and Tourism</div>
+            <div style="margin-top:6px">
+              <b style="font-size:19px;color:var(--orange)">87</b>
+              <span style="font-size:12px;color:var(--txt-2)">Final score · 2nd of 24</span>
+            </div>
+          </div>
+          <span style="color:var(--orange);font-size:20px">›</span>
+        </div>
+        <div style="border-top:1px solid var(--line);margin-top:13px;padding-top:12px;font-size:12.5px;color:var(--txt-2)">
+          Tap to see your team finisher card
+        </div>
+      </div>
+
+      <div class="orgcard" id="liveCard">
+        <div class="orgtop">
+          <span class="ic">🏛️</span>
+          <div class="nm"><div class="l">Government</div><div class="v">Dubai Economy and Tourism</div></div>
+          <div class="pos"><div class="v" id="lbPos">2nd</div><div class="l" id="lbField">of 24</div></div>
+        </div>
+        <div class="scorewrap">
+          <div>
+            <div class="ring">
+              <svg width="82" height="82" viewBox="0 0 82 82">
+                <circle cx="41" cy="41" r="34" fill="none" stroke="#1A222C" stroke-width="8"/>
+                <circle id="lbRing" cx="41" cy="41" r="34" fill="none" stroke="url(#ringgrad)" stroke-width="8"
+                        stroke-linecap="round" stroke-dasharray="213.6" stroke-dashoffset="27.8"
+                        transform="rotate(-90 41 41)"/>
+                <defs><linearGradient id="ringgrad" x1="0" y1="1" x2="1" y2="0">
+                  <stop offset="0" stop-color="#00B7FF"/><stop offset="1" stop-color="#7CFF1E"/>
+                </linearGradient></defs>
+              </svg>
+              <div class="num"><b id="lbScore">87</b><s>/ 100</s></div>
+            </div>
+            <div class="ringlab">DFC score</div>
+          </div>
+          <div class="subscores">
+            <div class="s">
+              <div class="r"><span>Participation</span><b id="lbPart">71</b></div>
+              <div class="minibar"><i id="lbPartBar" style="width:71%;background:var(--green)"></i></div>
+            </div>
+            <div class="s">
+              <div class="r"><span>Completion</span><b id="lbComp">65</b></div>
+              <div class="minibar"><i id="lbCompBar" style="width:65%;background:var(--cyan)"></i></div>
+            </div>
+            <div style="font-size:10.5px;color:var(--txt-3);margin-top:9px;line-height:1.4">
+              DFC score combines participation and completion
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="toggle">
+        <button id="tgOrg" class="on" onclick="setBoard('org')">All organisations</button>
+        <button id="tgTeam" onclick="setBoard('team')">My team</button>
+      </div>
+
+      <div class="lbhead">
+        <h3 id="lbTitle">Top organisations</h3>
+        <button class="linkbtn" style="padding:0;margin:0 15px 0 0" onclick="go('lb-full')">View all</button>
+      </div>
+      <div style="display:flex;justify-content:flex-end;font-size:10.5px;color:var(--txt-3);margin:-4px 15px 7px 0" id="lbUnit">DFC score</div>
+      <div id="lbEmpty" style="display:none;border:1px dashed var(--line);border-radius:14px;padding:26px 20px;text-align:center">
+        <div style="font-size:26px;margin-bottom:9px">🏁</div>
+        <div style="font-size:14.5px;font-weight:650;margin-bottom:5px">The leaderboard opens tomorrow</div>
+        <div style="font-size:12.5px;color:var(--txt-2);line-height:1.5">Scores appear once day one is done. Get your steps in — you'll be on it in the morning.</div>
+      </div>
+      <div id="lbList"></div>
+      <div class="note" id="lbNote">Scores shown once as a column, not repeated under every row.</div>
+    </div>
+    <div class="tabbar">
+      <button><span class="ic">🏠</span>Home</button>
+      <button><span class="ic">🎁</span>Rewards</button>
+      <button class="on"><span class="ic">🏆</span>Challenges</button>
+      <button><span class="ic">👤</span>Profile</button>
+    </div>
+  </div>
+
+  <!-- ============ INFO ============ -->
+  <div class="screen" id="info">
+    <div class="statusbar"><span>1:41</span><span class="icons">▮▮▮ ᯤ ▰</span></div>
+    <div class="navbar">
+      <button class="back" onclick="back()"><svg viewBox="0 0 24 24" fill="none" stroke="#062400" stroke-width="3"><path d="M15 18l-6-6 6-6"/></svg></button>
+      <div class="title">Info</div>
+      <div class="right">⋮</div>
+    </div>
+    <div class="scroll">
+      <div class="tabs">
+        <button onclick="go('scorecard')">Scorecard</button>
+        <button onclick="openLeaderboard()">Leaderboard</button>
+        <button class="on">Info</button>
+      </div>
+
+      <div class="orgcard" style="padding:14px">
+        <div style="display:flex;align-items:center;gap:11px;margin-bottom:13px">
+          <span style="width:30px;flex:0 0 30px" id="logoInfo"></span>
+          <b style="flex:1;font-size:15.5px;font-weight:700">Track your 30x30</b>
+          <span style="font-size:12px;color:var(--green)" id="infoStatus">Ongoing</span>
+        </div>
+
+        <div style="border:1px solid var(--line);border-radius:13px;padding:22px;display:flex;justify-content:center;margin-bottom:13px">
+          <div class="dfc" style="margin:0" id="logoInfoBig"></div>
+        </div>
+
+        <div style="display:inline-flex;align-items:center;gap:6px;background:#2A3B7A;border-radius:9px;padding:6px 11px;font-size:12.5px;margin-bottom:15px">👥 Teams</div>
+
+        <div style="font-size:15px;font-weight:700;color:var(--cyan);margin-bottom:9px">Description</div>
+        <div style="font-size:13.5px;color:#D6DDE5;line-height:1.55">
+          <p style="margin:0 0 11px">Track your 30x30 during this year's Dubai Fitness Challenge with STEPPI.</p>
+          <p style="margin:0 0 11px">Have fun and get active wherever you are. Every day you hit either 30 active minutes or 10,000 steps counts on your scorecard.</p>
+          <p style="margin:0 0 11px">Each day you hit a goal earns a Day Finisher badge.</p>
+          <p style="margin:0">Can you collect all 30?</p>
+        </div>
+      </div>
+
+      <button class="btn" style="display:flex;align-items:center;justify-content:space-between;text-align:left;margin-bottom:10px" onclick="go('pulse')">
+        View citywide Pulse <span>›</span>
+      </button>
+      <button class="btn ghost" style="display:flex;align-items:center;justify-content:space-between;text-align:left;margin-bottom:16px" onclick="go('rules')">
+        Rules <span style="color:var(--txt-3)">›</span>
+      </button>
+
+      <div class="rowcard" style="justify-content:space-between"><span style="font-size:14px">Starts</span><span style="font-size:14px;color:var(--cyan)">Sun 1 Nov 2026</span></div>
+      <div class="rowcard" style="justify-content:space-between"><span style="font-size:14px">Ends</span><span style="font-size:14px;color:var(--cyan)">Mon 30 Nov 2026</span></div>
+      <div class="note">"DFC TRACK YOUR 30×30" was internal naming — shortened, sentence-cased, and the × swapped for a letter x.</div>
+    </div>
+    <div class="tabbar">
+      <button><span class="ic">🏠</span>Home</button>
+      <button><span class="ic">🎁</span>Rewards</button>
+      <button class="on"><span class="ic">🏆</span>Challenges</button>
+      <button><span class="ic">👤</span>Profile</button>
+    </div>
+  </div>
+
+  <!-- ============ RULES ============ -->
+  <div class="screen" id="rules">
+    <div class="statusbar"><span>1:41</span><span class="icons">▮▮▮ ᯤ ▰</span></div>
+    <div class="navbar">
+      <button class="back" onclick="back()"><svg viewBox="0 0 24 24" fill="none" stroke="#062400" stroke-width="3"><path d="M15 18l-6-6 6-6"/></svg></button>
+      <div class="title">Rules</div>
+      <div class="right"></div>
+    </div>
+    <div class="scroll">
+      <div style="display:flex;align-items:center;gap:9px;border:1px solid var(--orange);background:rgba(255,138,43,.09);border-radius:11px;padding:10px 13px;margin:4px 0 18px">
+        <span style="font-size:15px">⚠️</span>
+        <span style="font-size:12px;color:var(--orange);line-height:1.45">
+          <b>Placeholder — not final.</b> Rules are with DFC for sign-off.
+        </span>
+      </div>
+
+      <h2 style="font-size:25px;font-weight:700;color:var(--green);margin:6px 0 3px">Track your 30x30</h2>
+      <p style="font-size:13.5px;color:var(--txt-2);margin:0 0 22px">Dubai Fitness Challenge 2026 · 1–30 November</p>
+
+      <div class="rules">
+        <h3>How it works</h3>
+        <ul>
+          <li>Hit either daily goal: <b>10,000 steps</b> or <b>30 minutes of activity</b>.</li>
+          <li>Every day you hit a goal earns a Day Finisher badge.</li>
+          <li>Collect all 30 to unlock the DFC Finisher badge.</li>
+        </ul>
+
+        <h3>Dates and timing</h3>
+        <ul>
+          <li>The challenge runs from 1 to 30 November 2026.</li>
+          <li>Each day runs from 12:00am to 11:59pm, Dubai time.</li>
+          <li>You can log activity up to 7 days late. After that, a missed day can't be recovered.</li>
+        </ul>
+
+        <h3>Tracking your activity</h3>
+        <ul>
+          <li>Steps and active minutes sync automatically from your connected wearable.</li>
+          <li>No wearable? Log workouts yourself — they count exactly the same.</li>
+        </ul>
+
+        <h3>Leaderboards and scoring</h3>
+        <ul>
+          <li>Organisations are ranked by DFC score, out of 100.</li>
+          <li>DFC score combines <b>participation</b> — how many colleagues have joined and are active — with <b>completion</b>, how many daily goals your organisation hits.</li>
+          <li>You also appear on your team leaderboard, ranked by days completed.</li>
+        </ul>
+
+        <h3>Fair play</h3>
+        <ul>
+          <li>Track honestly. STEPPI monitors for unusual activity.</li>
+          <li>Workouts you log yourself are capped at 300 minutes a day.</li>
+          <li>Any manipulation may lead to disqualification, after review with your programme manager.</li>
+        </ul>
+      </div>
+      <div class="note">Replaces the group-step-goal rules, which describe a different challenge type. English spelling throughout; text left-aligned rather than justified.</div>
+    </div>
+    <div class="tabbar">
+      <button><span class="ic">🏠</span>Home</button>
+      <button><span class="ic">🎁</span>Rewards</button>
+      <button class="on"><span class="ic">🏆</span>Challenges</button>
+      <button><span class="ic">👤</span>Profile</button>
+    </div>
+  </div>
+
+  <!-- ============ CITY PULSE ============ -->
+  <div class="screen" id="pulse">
+    <div class="statusbar"><span>1:41</span><span class="icons">▮▮▮ ᯤ ▰</span></div>
+    <div class="navbar">
+      <button class="back" onclick="back()"><svg viewBox="0 0 24 24" fill="none" stroke="#062400" stroke-width="3"><path d="M15 18l-6-6 6-6"/></svg></button>
+      <div class="title">City Pulse</div>
+      <div class="right"></div>
+    </div>
+    <div style="flex:1;position:relative;background:#05080C">
+      <iframe id="pulseFrame" src="https://leaderboards.steppi.com/dfc/pulse/in-app/"
+              style="position:absolute;inset:0;width:100%;height:100%;border:0;background:#05080C"
+              referrerpolicy="no-referrer"></iframe>
+      <div id="pulseFallback" style="position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;padding:30px;text-align:center;background:#05080C">
+        <div style="font-size:30px;margin-bottom:12px">🌐</div>
+        <div style="font-size:15px;font-weight:650;margin-bottom:7px">City Pulse loads in a web view</div>
+        <div style="font-size:12.5px;color:var(--txt-2);line-height:1.55;margin-bottom:16px">
+          leaderboards.steppi.com won't render inside a local file — it will work fine in the app.
+        </div>
+        <a href="https://leaderboards.steppi.com/dfc/pulse/in-app/" target="_blank"
+           style="color:var(--cyan);font-size:13px;text-decoration:none;border:1px solid var(--cyan);border-radius:11px;padding:11px 18px">
+          Open City Pulse in a browser ↗
+        </a>
+      </div>
+    </div>
+    <div class="tabbar">
+      <button><span class="ic">🏠</span>Home</button>
+      <button><span class="ic">🎁</span>Rewards</button>
+      <button class="on"><span class="ic">🏆</span>Challenges</button>
+      <button><span class="ic">👤</span>Profile</button>
+    </div>
+  </div>
+
+  <!-- ============ FULL LEADERBOARD ============ -->
+  <div class="screen" id="lb-full">
+    <div class="statusbar"><span>1:41</span><span class="icons">▮▮▮ ᯤ ▰</span></div>
+    <div class="navbar">
+      <button class="back" onclick="back()"><svg viewBox="0 0 24 24" fill="none" stroke="#062400" stroke-width="3"><path d="M15 18l-6-6 6-6"/></svg></button>
+      <div class="title" id="fullTitle">All organisations</div>
+      <div class="right"></div>
+    </div>
+    <div style="padding:0 20px">
+      <div class="toggle">
+        <button id="fgOrg" class="on" onclick="setBoard('org',true)">All organisations</button>
+        <button id="fgTeam" onclick="setBoard('team',true)">My team</button>
+      </div>
+      <div class="search" style="margin-bottom:12px">
+        <span>🔍</span><input id="fullSearch" placeholder="Search" oninput="renderFull()">
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:10.5px;color:var(--txt-3);margin:0 15px 8px 4px">
+        <span id="fullCount">24 organisations</span><span id="fullUnit">DFC score</span>
+      </div>
+    </div>
+    <div class="scroll" id="fullList" style="padding-top:2px"></div>
+    <div id="youBar" style="padding:10px 20px 0;border-top:1px solid var(--line-soft);background:var(--bg)"></div>
+    <div class="tabbar">
+      <button><span class="ic">🏠</span>Home</button>
+      <button><span class="ic">🎁</span>Rewards</button>
+      <button class="on"><span class="ic">🏆</span>Challenges</button>
+      <button><span class="ic">👤</span>Profile</button>
+    </div>
+  </div>
+
+  <!-- ============ PROFILE ============ -->
+  <div class="screen" id="profile">
+    <div class="statusbar"><span>1:41</span><span class="icons">▮▮▮ ᯤ ▰</span></div>
+    <div class="navbar">
+      <button class="back" onclick="back()"><svg viewBox="0 0 24 24" fill="none" stroke="#062400" stroke-width="3"><path d="M15 18l-6-6 6-6"/></svg></button>
+      <div class="title">Jessica Kodan</div>
+      <div class="right"></div>
+    </div>
+    <div class="scroll">
+      <div class="userrow">
+        <span style="font-size:21px">🏆</span>
+        <div class="avatar">JK</div>
+        <div class="who"><div class="nm">Jessica Kodan</div></div>
+        <button class="cheer" id="cheerBtn" onclick="cheer()"><span class="ic">📣</span><span id="cheerTxt">Cheer</span></button>
+      </div>
+
+      <div class="seclab">Challenge total</div>
+      <div class="tiles">
+        <div class="tile"><span class="ic">👟</span><div class="n" id="pSteps">142,380</div><div class="l">Steps</div></div>
+        <div class="tile"><span class="ic">🔥</span><div class="n" id="pActive">421 min</div><div class="l">Active</div></div>
+        <div class="tile"><span class="ic">🏋️</span><div class="n" id="pWork">180 min</div><div class="l">Workout</div></div>
+      </div>
+
+      <div class="statline">
+        <span class="l">Days completed</span>
+        <span class="v"><span id="pDone">14</span> <small>of 30</small></span>
+      </div>
+      <div class="bar"><i id="pBar" style="width:46.6%"></i></div>
+      <div style="height:10px"></div>
+      <div id="dayList"></div>
+    </div>
+    <div class="tabbar">
+      <button><span class="ic">🏠</span>Home</button>
+      <button><span class="ic">🎁</span>Rewards</button>
+      <button class="on"><span class="ic">🏆</span>Challenges</button>
+      <button><span class="ic">👤</span>Profile</button>
+    </div>
+  </div>
+
+  <!-- ============ ADD WORKOUT — SEARCH ============ -->
+  <div class="screen" id="add-search">
+    <div class="statusbar"><span>1:41</span><span class="icons">▮▮▮ ᯤ ▰</span></div>
+    <div class="navbar">
+      <button class="back" onclick="back()"><svg viewBox="0 0 24 24" fill="none" stroke="#062400" stroke-width="3"><path d="M15 18l-6-6 6-6"/></svg></button>
+      <div class="title">Add workout</div>
+      <div class="right"></div>
+    </div>
+    <div class="scroll">
+      <p class="sub" style="margin-bottom:18px">No wearable? Log your activity here and it counts towards your daily goal</p>
+      <div class="search">
+        <span>🔍</span><input id="actSearch" placeholder="Search activities" oninput="renderActivities()">
+      </div>
+      <div id="actList"></div>
+      <div id="actEmpty" style="display:none;font-size:13px;color:var(--txt-2);text-align:center;padding:20px">
+        No match — try 'gym' or 'walk', or pick Other
+      </div>
+    </div>
+    <div style="padding:0 20px 24px">
+      <button class="btn" id="actBtn" disabled onclick="openModal('m-duration')">Continue</button>
+    </div>
+  </div>
+
+  <!-- ============ OVERLAYS ============ -->
+
+  <!-- How day badges work -->
+  <div class="overlay" id="m-how">
+    <div class="sheet">
+      <button class="x" onclick="closeModal()">✕</button>
+      <h2 style="font-size:22px;font-weight:700;margin:0 0 20px">How day badges work</h2>
+
+      <div class="listcard" style="border:0;background:none;padding:0">
+        <div class="item" style="margin-bottom:20px">
+          <span class="ic" style="color:var(--cyan);border:1.5px solid var(--cyan);border-radius:50%;width:26px;height:26px;font-size:13px;display:flex;align-items:center;justify-content:center;flex:0 0 26px">1</span>
+          <div><b style="color:var(--cyan);font-size:17px">Hit either daily goal</b>
+          <span style="font-size:13px">10,000 steps or 30 minutes of activity<br>Active minutes come from your wearable. No wearable? Log a workout instead.</span></div>
+        </div>
+        <div class="item" style="margin-bottom:20px">
+          <span class="ic" style="color:var(--cyan);border:1.5px solid var(--cyan);border-radius:50%;width:26px;height:26px;font-size:13px;display:flex;align-items:center;justify-content:center;flex:0 0 26px">2</span>
+          <div><b style="color:var(--cyan);font-size:17px">The day becomes a badge</b>
+          <span style="font-size:13px">It lights up on your scorecard and counts towards your 30 days. Tap to open your badge and share it.</span></div>
+        </div>
+        <div class="item">
+          <span class="ic" style="color:var(--green);border:1.5px solid var(--green);border-radius:50%;width:26px;height:26px;font-size:13px;display:flex;align-items:center;justify-content:center;flex:0 0 26px">3</span>
+          <div><b style="color:var(--green);font-size:17px">Collect all 30 for the DFC Finisher</b>
+          <span style="font-size:13px">Earn all 30 day badges to unlock the DFC Finisher 30x30 badge.</span></div>
+        </div>
+      </div>
+
+      <div style="height:20px"></div>
+      <button class="btn green" onclick="closeModal()">Got it</button>
+    </div>
+  </div>
+
+  <!-- Duration sheet -->
+  <div class="overlay" id="m-duration">
+    <div class="sheet">
+      <button class="x" onclick="closeModal()">✕</button>
+      <div class="dfc" id="logo6"></div>
+      <h2 style="font-size:19px;font-weight:600;text-align:center;margin:0 0 4px">How long did you work out?</h2>
+      <p style="font-size:13px;color:var(--cyan);text-align:center;margin:0 0 20px" id="durAct">Padel</p>
+
+      <div class="chips" id="durChips"></div>
+
+      <div class="fieldlab">Or enter minutes</div>
+      <input class="minfield" id="durManual" type="number" placeholder="Enter minutes" oninput="manualMins()">
+      <div id="durErr" style="display:none;font-size:12px;color:#FF6B6B;margin:-10px 0 14px">That's a long session — enter up to 300 minutes</div>
+
+      <div class="fieldlab">When was it?</div>
+      <button class="dateopt on" id="dOptToday" onclick="setDateOpt('today')">Today</button>
+      <button class="dateopt" id="dOptYest" onclick="setDateOpt('yesterday')">Yesterday</button>
+      <button class="dateopt" id="dOptPick" onclick="openModal('m-calendar')">Choose another day</button>
+
+      <div style="height:10px"></div>
+      <button class="btn" id="saveBtn" onclick="saveWorkout()">Save workout</button>
+    </div>
+  </div>
+
+  <!-- Calendar -->
+  <div class="overlay" id="m-calendar">
+    <div class="sheet">
+      <button class="x" onclick="openModal('m-duration')">✕</button>
+      <div class="dfc" id="logo7"></div>
+      <h2 style="font-size:19px;font-weight:600;text-align:center;margin:0 0 4px">Which day was it?</h2>
+      <p style="font-size:13px;color:var(--txt-2);text-align:center;margin:0 0 18px">You can go back up to 7 days</p>
+
+      <div class="cal">
+        <div class="calhd">
+          <button onclick="return false" style="opacity:.35">‹</button>
+          <div class="m">November 2026</div>
+          <button onclick="return false" style="opacity:.35">›</button>
+        </div>
+        <div class="calgrid" id="calGrid"></div>
+      </div>
+      <button class="btn" onclick="openModal('m-duration')">Select day</button>
+      <div class="note">1 Nov 2026 is a Sunday and November has 30 days. Anything outside the 7-day window or the challenge is disabled. Green dots mark days you've already logged.</div>
+    </div>
+  </div>
+
+  <!-- Day badge -->
+  <div class="overlay" id="m-daybadge">
+    <div class="sheet">
+      <button class="x" onclick="closeModal()">✕</button>
+      <div class="badgecard">
+        <div class="dfc" id="logo8"></div>
+        <div class="dayline" id="badgeDay">DAY 15</div>
+        <div class="finline">FINISHER</div>
+        <div class="person"><div class="avatar" style="width:30px;height:30px;flex:0 0 30px;font-size:12px">JK</div><div class="nm">Jessica Kodan</div></div>
+        <div class="hook" id="badgeHook">Dubai Fitness Challenge 2026</div>
+        <div class="steppi">ST<span class="e">≡</span>PPI</div>
+        <div class="cta">Track your 30x30<br>on STEPPI</div>
+        <div class="tag">#Dubai30x30</div>
+      </div>
+      <div style="font-size:13px;color:var(--txt-2);text-align:center;margin:16px 0 0">Share your badge</div>
+      <div class="sharegrid">
+        <button onclick="toast('Opening Instagram Story…')"><span class="ic">📷</span>Instagram Story</button>
+        <button onclick="toast('Opening Instagram…')"><span class="ic">📷</span>Instagram Post</button>
+        <button onclick="toast('Opening WhatsApp…')"><span class="ic">💬</span>WhatsApp</button>
+        <button onclick="toast('Opening Facebook Story…')"><span class="ic">📘</span>Facebook Story</button>
+        <button onclick="toast('Opening Facebook…')"><span class="ic">📘</span>Facebook Post</button>
+        <button onclick="toast('Opening share sheet…')"><span class="ic">↗</span>More</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Finisher badge -->
+  <div class="overlay" id="m-finisher">
+    <div class="sheet">
+      <button class="x" onclick="closeModal()">✕</button>
+      <div class="badgecard gold">
+        <div class="dfc" id="logo9"></div>
+        <div class="dayline" style="color:var(--green)">DFC</div>
+        <div class="finline">FINISHER</div>
+        <div class="person"><div class="avatar" style="width:30px;height:30px;flex:0 0 30px;font-size:12px">JK</div><div class="nm">Jessica Kodan</div></div>
+        <div class="claim">I've completed <b>all 30 days</b><br>Dubai Fitness Challenge 2026</div>
+        <div class="steppi">ST<span class="e">≡</span>PPI</div>
+        <div class="cta">Track your 30x30<br>on STEPPI</div>
+        <div class="tag">#Dubai30x30</div>
+      </div>
+      <div style="font-size:13px;color:var(--txt-2);text-align:center;margin:16px 0 0">Share your badge</div>
+      <div class="sharegrid">
+        <button onclick="toast('Opening Instagram Story…')"><span class="ic">📷</span>Instagram Story</button>
+        <button onclick="toast('Opening Instagram…')"><span class="ic">📷</span>Instagram Post</button>
+        <button onclick="toast('Opening WhatsApp…')"><span class="ic">💬</span>WhatsApp</button>
+        <button onclick="toast('Opening Facebook Story…')"><span class="ic">📘</span>Facebook Story</button>
+        <button onclick="toast('Opening Facebook…')"><span class="ic">📘</span>Facebook Post</button>
+        <button onclick="toast('Opening share sheet…')"><span class="ic">↗</span>More</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- We are all champions — team finisher card -->
+  <div class="overlay" id="m-teamchamps">
+    <div class="sheet">
+      <button class="x" onclick="closeModal()">✕</button>
+      <div class="badgecard gold">
+        <div class="dfc" id="logo11"></div>
+        <div style="display:flex;align-items:center;gap:14px;text-align:left;margin-bottom:14px">
+          <span style="font-size:52px">🏆</span>
+          <div>
+            <div style="font-size:24px;font-weight:800;font-style:italic;color:var(--gold);line-height:1.05">WE ARE ALL<br>CHAMPIONS</div>
+          </div>
+        </div>
+        <div style="font-size:18px;font-weight:700;margin-bottom:3px">Dubai Economy and Tourism</div>
+        <div style="font-size:12.5px;color:var(--txt-2);margin-bottom:16px">Government leaderboard · 2nd of 24</div>
+        <div class="steppi">ST<span class="e">≡</span>PPI</div>
+        <div class="cta">Track your 30x30 on STEPPI</div>
+        <div style="font-size:12px;color:var(--txt-2);margin-top:10px;line-height:1.5">Thanks for moving with Dubai<br>Dubai Fitness Challenge 2026</div>
+        <div class="tag">#Dubai30x30</div>
+      </div>
+      <div style="font-size:13px;color:var(--txt-2);text-align:center;margin:16px 0 0">Share your 30x30</div>
+      <div class="sharegrid">
+        <button onclick="toast('Opening Instagram Story…')"><span class="ic">📷</span>Instagram Story</button>
+        <button onclick="toast('Opening WhatsApp…')"><span class="ic">💬</span>WhatsApp</button>
+        <button onclick="toast('Opening share sheet…')"><span class="ic">↗</span>More</button>
+      </div>
+      <div class="note">Score reads 87 to match the standings — the Figma frame shows 91, which is RTA's score, not DET's.</div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+</div>
+
+<div class="caption">Prototype · final copy applied · placeholder logos — swap for the real DFC and STEPPI assets</div>
+</div>
+
+<script>
+/* ============ Logo mark (placeholder) ============ */
+function dfcLogo(size,uid){
+  const s = size||74;
+  return `<svg width="${s}" height="${s}" viewBox="0 0 100 100">
+    <defs><linearGradient id="lg${uid}" x1="0" y1="1" x2="1" y2="0">
+      <stop offset="0" stop-color="#7CFF1E"/><stop offset="1" stop-color="#00B7FF"/>
+    </linearGradient></defs>
+    <circle cx="50" cy="50" r="40" fill="none" stroke="url(#lg${uid})" stroke-width="6"
+            stroke-linecap="round" stroke-dasharray="228 40" transform="rotate(120 50 50)"/>
+    <text x="50" y="45" text-anchor="middle" font-size="27" font-weight="900" font-style="italic"
+          fill="#7CFF1E" font-family="var(--font)">30</text>
+    <text x="50" y="72" text-anchor="middle" font-size="27" font-weight="900" font-style="italic"
+          fill="#00B7FF" font-family="var(--font)">30</text>
+    <text x="50" y="57" text-anchor="middle" font-size="16" font-weight="900" font-style="italic"
+          fill="#C8FF4D" font-family="var(--font)">x</text>
+  </svg>
+  <div class="cap">DUBAI FITNESS<br>CHALLENGE</div>`;
+}
+['logo1','logo2','logo3','logo4','logo5','logo6','logo7','logo8','logo9','logo10','logo11'].forEach((id,i)=>{
+  const el=document.getElementById(id); if(el) el.innerHTML=dfcLogo(i>4?64:74,i);
+});
+document.getElementById('logoInfo').innerHTML=dfcLogo(30,'ia').split('<div class="cap"')[0];
+document.getElementById('logoInfoBig').innerHTML=dfcLogo(88,'ib');
+document.getElementById('logoSplash').innerHTML=dfcLogo(150,'sp');
+document.getElementById('logoBanner').innerHTML=dfcLogo(40,'bn').split('<div class="cap"')[0];
+document.getElementById('logoChal').innerHTML=dfcLogo(28,'ch').split('<div class="cap"')[0];
+document.getElementById('logoChalBig').innerHTML=dfcLogo(78,'cb').split('<div class="cap"')[0];
+
+/* Home activity rings */
+document.getElementById('homeRings').innerHTML=(()=>{
+  const rings=[[68,'#2FE8C0',.72],[54,'#F5C93B',.55],[41,'#F0506E',.40],[28,'#7B7BF0',.30]];
+  return `<svg width="168" height="168" viewBox="0 0 168 168">${rings.map(([r,c,p])=>{
+    const C=2*Math.PI*r;
+    return `<circle cx="84" cy="84" r="${r}" fill="none" stroke="${c}" stroke-opacity=".22" stroke-width="13"/>
+            <circle cx="84" cy="84" r="${r}" fill="none" stroke="${c}" stroke-width="13" stroke-linecap="round"
+              stroke-dasharray="${C}" stroke-dashoffset="${C*(1-p)}" transform="rotate(-90 84 84)"/>`;
+  }).join('')}</svg>`;
+})();
+
+/* Mini DFC badge mark used inside each earned day */
+function miniBadge(d){
+  return `<svg viewBox="0 0 100 100">
+    <defs><linearGradient id="mb${d}" x1="0" y1="1" x2="1" y2="0">
+      <stop offset="0" stop-color="#7CFF1E"/><stop offset="1" stop-color="#00B7FF"/>
+    </linearGradient></defs>
+    <circle cx="50" cy="50" r="47" fill="#0A1119"/>
+    <circle cx="50" cy="50" r="43" fill="none" stroke="url(#mb${d})" stroke-width="7"
+            stroke-linecap="round" stroke-dasharray="244 26" transform="rotate(118 50 50)"/>
+    <text x="50" y="46" text-anchor="middle" font-size="30" font-weight="900" font-style="italic"
+          fill="#7CFF1E" font-family="var(--font)">30</text>
+    <text x="50" y="76" text-anchor="middle" font-size="30" font-weight="900" font-style="italic"
+          fill="#00B7FF" font-family="var(--font)">30</text>
+    <text x="50" y="60" text-anchor="middle" font-size="17" font-weight="900" font-style="italic"
+          fill="#C8FF4D" font-family="var(--font)">x</text>
+  </svg>`;
+}
+
+/* ============ State ============ */
+const TOTAL_DAYS=30;
+let TODAY=15;
+const START=new Date(2026,10,1); // 1 Nov 2026 — a Sunday
+const DEFAULT_STATE={
+  joinType:'org',
+  community:null,
+  code:'G12345',
+  codeCtx:'join',
+  phase:'live',
+  activity:null,
+  mins:30,
+  dateOpt:'today',
+  pickedDay:TODAY,
+  done:[1,2,3,4,5,6,7,8,9,10,11,12,13,14],
+  todaySteps:6240, todayActive:18, todayWorkout:0,
+  cheered:false
+};
+let state=JSON.parse(JSON.stringify(DEFAULT_STATE));
+
+const COMMUNITIES=['Al Qusais','Dubai Marina','Jumeirah Village Circle','Business Bay','Deira',
+  'Al Barsha','Downtown Dubai','Mirdif','Arabian Ranches','Jumeirah Lakes Towers','Al Nahda','Silicon Oasis'];
+const ACTIVITIES=[['🏃','Running'],['🚶','Walking'],['🚴','Cycling'],['🏊','Swimming'],['🏋️','Gym session'],
+  ['🎾','Padel'],['🧘','Yoga'],['⚽','Football'],['🏸','Badminton'],['🤸','Other']];
+
+/* ============ Mobile drawer ============ */
+function toggleRail(force){
+  const r=document.getElementById('rail'), s=document.getElementById('scrim');
+  const open = force===undefined ? !r.classList.contains('open') : force;
+  r.classList.toggle('open',open); s.classList.toggle('open',open);
+  document.getElementById('railBtn').textContent = open ? '✕' : '☰';
+}
+
+/* ============ Router ============ */
+let stack=['splash'];
+function go(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  const el=document.getElementById(id);
+  if(!el) return;
+  el.classList.add('active');
+  const sc=el.querySelector('.scroll'); if(sc) sc.scrollTop=0;
+  if(stack[stack.length-1]!==id) stack.push(id);
+  closeModal();
+  if(window.innerWidth<=900) toggleRail(false);
+  if(id==='scorecard') renderScorecard();
+  if(id==='leaderboard') renderBoard();
+  if(id==='lb-full') renderFull();
+  if(id==='pulse') renderPulse();
+  if(id==='info') document.getElementById('infoStatus').textContent=
+    state.phase==='complete'?'Complete':(state.phase==='day1'?'Starts today':'Ongoing');
+  if(id==='profile') renderProfile();
+  if(id==='join-community') renderCommunities();
+  if(id==='join-done') renderDone();
+  if(id==='add-search') renderActivities();
+  if(id==='join-code'){ renderCode(); applyCodeContext(); }
+  if(id==='home'){
+    document.getElementById('homeSteps').textContent=state.todaySteps.toLocaleString('en-GB');
+    document.getElementById('homeActive').textContent=state.todayActive+state.todayWorkout;
+    const dt=new Date(START); dt.setDate(dt.getDate()+TODAY-1);
+    document.getElementById('homeDay').textContent=dt.toLocaleDateString('en-GB',{weekday:'long'});
+    document.getElementById('homeDate').textContent=dt.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
+  }
+  if(id==='challenges') document.getElementById('chalStatus').textContent=
+    state.phase==='complete'?'Complete':(state.phase==='day1'?'Starts today':'Ongoing');
+}
+function back(){
+  if(stack.length>1){stack.pop();}
+  const id=stack[stack.length-1];
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  const el=document.getElementById(id)||document.getElementById('join-how');
+  el.classList.add('active');
+  closeModal();
+}
+function openModal(id){
+  document.querySelectorAll('.overlay').forEach(o=>o.classList.remove('active'));
+  const m=document.getElementById(id);
+  if(m) m.classList.add('active');
+  if(id==='m-calendar') renderCalendar();
+  if(id==='m-duration') renderDuration();
+}
+function closeModal(){document.querySelectorAll('.overlay').forEach(o=>o.classList.remove('active'));}
+function toast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove('show'),2600);
+}
+function resetDemo(){state=JSON.parse(JSON.stringify(DEFAULT_STATE));stack=['splash'];applyFinished();go('splash');}
+
+/* ============ Challenge phase: day1 → live → complete ============ */
+const PHASES={
+  day1:   {label:'🌅 Day 1 — nothing logged yet', bg:'#1D2430', fg:'#9FB3C8',
+           today:1,  done:[], steps:0, active:0, work:0,
+           score:0, part:0, comp:0, pos:'', field:'of 24',
+           tSteps:0, tActive:0, tWork:0},
+  live:   {label:'▶ Live — day 15 of 30', bg:'#12313A', fg:'#00B7FF',
+           today:15, done:[1,2,3,4,5,6,7,8,9,10,11,12,13,14], steps:6240, active:18, work:0,
+           score:87, part:71, comp:65, pos:'2nd', field:'of 24',
+           tSteps:142380, tActive:421, tWork:180},
+  complete:{label:'🏁 Complete — all 30 days', bg:'#3A2E10', fg:'#F5C33B',
+           today:30, done:Array.from({length:30},(_,i)=>i+1), steps:11420, active:34, work:30,
+           score:87, part:71, comp:65, pos:'2nd', field:'of 24',
+           tSteps:301640, tActive:894, tWork:390}
+};
+const ORDER=['day1','live','complete'];
+function toggleFinished(){ setPhase(ORDER[(ORDER.indexOf(state.phase)+1)%ORDER.length]); }
+function setPhase(name){
+  state.phase=name;
+  const p=PHASES[state.phase];
+  TODAY=p.today;
+  state.done=[...p.done];
+  state.todaySteps=p.steps; state.todayActive=p.active; state.todayWorkout=p.work;
+  state.pickedDay=TODAY; state.dateOpt='today';
+  applyFinished();
+  const cur=stack[stack.length-1];
+  if(['scorecard','leaderboard','lb-full','profile','info'].includes(cur)) go(cur);
+}
+function applyFinished(){
+  const ph=state.phase, p=PHASES[ph], f=ph==='complete', d1=ph==='day1';
+  ORDER.forEach(k=>document.getElementById('ph-'+k).classList.toggle('on',k===ph));
+  document.getElementById('completeCard').style.display = f ? 'block' : 'none';
+  document.getElementById('liveCard').style.display = f ? 'none' : 'block';
+  document.getElementById('finisherBanner').style.display = f ? 'flex' : 'none';
+  // day-1 empty states
+  document.getElementById('lbEmpty').style.display = d1 ? 'block' : 'none';
+  document.getElementById('lbList').style.display = d1 ? 'none' : 'block';
+  document.getElementById('lbUnit').style.display = d1 ? 'none' : 'flex';
+  document.getElementById('pSteps').textContent=p.tSteps.toLocaleString('en-GB');
+  document.getElementById('pActive').textContent=p.tActive+' min';
+  document.getElementById('pWork').textContent=p.tWork+' min';
+  // org card figures
+  const C=213.6;
+  document.getElementById('lbScore').textContent=p.score;
+  document.getElementById('lbRing').setAttribute('stroke-dashoffset', C*(1-p.score/100));
+  document.getElementById('lbPart').textContent=p.part;
+  document.getElementById('lbComp').textContent=p.comp;
+  document.getElementById('lbPartBar').style.width=p.part+'%';
+  document.getElementById('lbCompBar').style.width=p.comp+'%';
+  document.getElementById('lbPos').textContent=p.pos;
+  document.getElementById('lbField').textContent=d1?'not yet ranked':p.field;
+}
+
+/* ============ Code entry ============ */
+function renderCode(){
+  const w=document.getElementById('codeCells');
+  w.innerHTML='';
+  for(let i=0;i<6;i++){
+    const c=document.createElement('div');
+    c.className='cell'+(state.code[i]?' fill':'');
+    c.textContent=state.code[i]||'';
+    w.appendChild(c);
+  }
+  document.getElementById('codeBtn').disabled=state.code.length<6;
+  const kp=document.getElementById('keypad');
+  if(!kp.dataset.built){
+    const keys=['1','2','3','4','5','6','7','8','9','G','0','⌫'];
+    keys.forEach(k=>{
+      const b=document.createElement('button');
+      b.textContent=k;
+      b.onclick=()=>{
+        if(k==='⌫') state.code=state.code.slice(0,-1);
+        else if(state.code.length<6) state.code+=k;
+        document.getElementById('codeErr').style.display='none';
+        renderCode();
+      };
+      kp.appendChild(b);
+    });
+    kp.dataset.built='1';
+  }
+}
+function submitCode(){
+  if(state.code.toUpperCase()==='G12345'){ state.joinType='org'; go('join-confirm'); }
+  else { document.getElementById('codeErr').style.display='block'; }
+}
+
+/* Individuals have no organisation leaderboard — route them to add a code first */
+function openLeaderboard(){
+  if(state.joinType==='individual'){ state.codeCtx='leaderboard'; go('join-code'); }
+  else { state.codeCtx='join'; go('leaderboard'); }
+}
+function codeAltAction(){
+  if(state.codeCtx==='leaderboard'){ state.codeCtx='join'; back(); }
+  else { state.joinType='individual'; go('join-community'); }
+}
+function applyCodeContext(){
+  const fromLb = state.codeCtx==='leaderboard';
+  document.getElementById('codeDots').style.display = fromLb ? 'none' : 'flex';
+  document.getElementById('codeTitle').textContent = fromLb
+    ? 'Add your organisation' : 'Enter your organisation code';
+  document.getElementById('codeSub').textContent = fromLb
+    ? 'Enter your workplace code to join their leaderboard and see how your team is doing'
+    : 'Your employer will have shared a 6-character code';
+  document.getElementById('codeAlt').textContent = fromLb
+    ? 'Not part of an organisation? Go back' : 'No code? Join on your own';
+  document.getElementById('codeTabbar').style.display = fromLb ? 'flex' : 'none';
+}
+
+/* ============ Communities ============ */
+function renderCommunities(){
+  const q=(document.getElementById('commSearch').value||'').toLowerCase();
+  const list=document.getElementById('commList');
+  list.innerHTML='';
+  COMMUNITIES.filter(c=>c.toLowerCase().includes(q)).forEach(c=>{
+    const b=document.createElement('button');
+    b.className='actrow'+(state.community===c?' on':'');
+    b.innerHTML=`<span class="ic">📍</span><span class="nm">${c}</span>${state.community===c?'<span style="color:var(--cyan)">✓</span>':''}`;
+    b.onclick=()=>{state.community=c;renderCommunities();document.getElementById('commBtn').disabled=false;};
+    list.appendChild(b);
+  });
+  document.getElementById('commBtn').disabled=!state.community;
+}
+
+/* ============ You're in ============ */
+function renderDone(){
+  const org=state.joinType==='org';
+  document.getElementById('doneOrgRow').style.display=org?'flex':'flex';
+  document.getElementById('doneOrg').textContent=org?'Dubai Economy and Tourism':'On my own';
+  document.getElementById('doneOrgRow').querySelector('.lab').textContent=org?'Organisation':'Joining as';
+  document.getElementById('doneComm').textContent=state.community||'Al Qusais';
+  document.getElementById('doneLb').textContent=org?'Government + your team':(state.community||'Al Qusais')+' + citywide';
+}
+
+/* ============ Scorecard ============ */
+function goalMet(){return state.todaySteps>=10000 || (state.todayActive+state.todayWorkout)>=30;}
+function renderScorecard(){
+  document.getElementById('tSteps').textContent=state.todaySteps.toLocaleString('en-GB');
+  document.getElementById('tActive').textContent=state.todayActive+' min';
+  document.getElementById('tWork').textContent=state.todayWorkout+' min';
+  const hint=document.getElementById('zeroHint');
+  if(goalMet()){hint.textContent="Today's goal met — badge earned";hint.style.color='var(--green)';}
+  else if(state.phase==='day1' && state.todaySteps===0){
+    hint.textContent="Nothing logged yet — a 10-minute walk is a good start";hint.style.color='';
+  }
+  else{
+    const left=30-(state.todayActive+state.todayWorkout);
+    hint.textContent=`${left} min to go today, or ${(10000-state.todaySteps).toLocaleString('en-GB')} more steps`;
+    hint.style.color='';
+  }
+  const n=state.done.length;
+  document.getElementById('doneCount').textContent=n;
+  document.getElementById('doneBar').style.width=(n/30*100)+'%';
+
+  const g=document.getElementById('grid30');
+  g.innerHTML='';
+  for(let d=1;d<=TOTAL_DAYS;d++){
+    const b=document.createElement('button');
+    const done=state.done.includes(d);
+    b.className='day'+(done?' done':'')+(d===TODAY&&!done?' today':'');
+    b.innerHTML=`<span class="lbl">Day ${d}</span>
+                 <span class="circ">${done?miniBadge(d):d}</span>`;
+    if(done) b.onclick=()=>showDayBadge(d);
+    g.appendChild(b);
+  }
+}
+function showDayBadge(d){
+  document.getElementById('badgeDay').textContent='DAY '+d;
+  openModal('m-daybadge');
+}
+
+/* ============ Leaderboard ============ */
+let board='org';
+const YOU_ORG='Dubai Economy and Tourism', YOU_NAME='Jessica K';
+const ORGS_FULL=[['RTA Dubai',91],['Dubai Economy and Tourism',87],['Dubai Police',84],['FTA',80],
+  ['Dubai Municipality',77],['DEWA',74],['Dubai Customs',72],['Dubai Health Authority',70],
+  ['Dubai Courts',68],['RTA Marine',66],['Dubai Culture',64],['DIFC Authority',62],
+  ['Dubai Sports Council',60],['KHDA',58],['Dubai Civil Aviation',56],['Dubai Land Department',54],
+  ['Dubai Statistics Centre',52],['Dubai Corporation for Ambulance',50],['Dubai Media Office',47],
+  ['Dubai Airports',45],['Dubai Maritime Authority',42],['Community Development Authority',39],
+  ['Dubai Future Foundation',36],['Dubai Digital Authority',33]];
+const TEAM_FULL=[['Jessica K',14],['Kara W',13],['Sally M',12],['Joe B',11],['Ahmed R',9],['Priya S',8],
+  ['Omar H',8],['Layla M',7],['Daniel T',7],['Fatima A',6],['Marcus L',5],['Noura S',5],
+  ['Rahul P',4],['Emma C',3],['Yousef K',3],['Anita D',2],['Tom W',1],['Zainab I',0]];
+const medal=i=>i===0?'🥇':i===1?'🥈':i===2?'🥉':String(i+1);
+const ORGS=ORGS_FULL.slice(0,6).map((r,i)=>[medal(i),r[0],r[1]]);
+const TEAM=TEAM_FULL.slice(0,6).map((r,i)=>[medal(i),r[0],r[1]]);
+function setBoard(b,full){
+  board=b;
+  ['tgOrg','fgOrg'].forEach(id=>document.getElementById(id).classList.toggle('on',b==='org'));
+  ['tgTeam','fgTeam'].forEach(id=>document.getElementById(id).classList.toggle('on',b==='team'));
+  if(full) renderFull(); else renderBoard();
+}
+function renderFull(){
+  const org=board==='org';
+  const rows=org?ORGS_FULL:TEAM_FULL;
+  const q=(document.getElementById('fullSearch').value||'').toLowerCase();
+  document.getElementById('fullTitle').textContent=org?'All organisations':'My team';
+  document.getElementById('fullUnit').textContent=org?'DFC score':'Days completed';
+  document.getElementById('fullCount').textContent=org?`${rows.length} organisations`:`${rows.length} colleagues`;
+  const me=org?YOU_ORG:YOU_NAME;
+  const myRank=rows.findIndex(r=>r[0]===me)+1;
+
+  const list=document.getElementById('fullList');
+  list.innerHTML='';
+  rows.forEach((r,i)=>{
+    if(q && !r[0].toLowerCase().includes(q)) return;
+    const fin=state.phase==='complete';
+    const d=document.createElement('div');
+    d.className='lbrow'+(fin && org && i<3 ? ' pod'+(i+1) : '');
+    if(r[0]===me && !(fin && org && i<3)){d.style.borderColor='var(--cyan)';d.style.background='rgba(0,183,255,.07)';}
+    d.innerHTML=`<span class="rk">${fin && org && i<3 ? ['🏆','🥈','⭐'][i] : medal(i)}</span>
+      <span class="nm">${r[0]}${r[0]===me?' <span style="color:var(--cyan);font-size:11px;font-weight:600">You</span>':''}</span>
+      <span class="sc"><b>${r[1]}</b></span>`;
+    if(!org) d.onclick=()=>go('profile');
+    list.appendChild(d);
+  });
+  if(!list.children.length){
+    list.innerHTML=`<div style="font-size:13px;color:var(--txt-2);text-align:center;padding:26px">No match for "${document.getElementById('fullSearch').value}"</div>`;
+  }
+  document.getElementById('youBar').innerHTML=
+    `<div class="lbrow" style="border-color:var(--cyan);background:rgba(0,183,255,.07);margin-bottom:10px;cursor:default">
+      <span class="rk" style="font-size:13px;color:var(--cyan)">${myRank}</span>
+      <span class="nm">${org?'Your organisation':'You'}</span>
+      <span class="sc"><b style="color:var(--cyan)">${rows[myRank-1][1]}</b></span>
+    </div>`;
+}
+function renderBoard(){
+  const rows=board==='org'?ORGS:TEAM;
+  const fin=state.phase==='complete';
+  document.getElementById('lbTitle').textContent = fin
+    ? 'Final standings'
+    : (board==='org'?'Top organisations':'Top colleagues');
+  document.getElementById('lbUnit').textContent = board==='org'
+    ? (fin?'Final score':'DFC score') : 'Days completed';
+  document.getElementById('lbNote').textContent = state.phase==='day1'
+    ? 'Day one has no scores yet — an empty state beats a leaderboard of zeros.'
+    : (board==='org'
+      ? 'Rank shown as "2nd of 24" — a position with no field size tells you little.'
+      : 'Team view counts days completed, so the unit is labelled rather than left as a bare number.');
+  const l=document.getElementById('lbList');
+  l.innerHTML='';
+  rows.forEach((r,i)=>{
+    const d=document.createElement('div');
+    d.className='lbrow'+(fin && board==='org' && i<3 ? ' pod'+(i+1) : '');
+    const icon = fin && board==='org' && i<3 ? ['🏆','🥈','⭐'][i] : r[0];
+    d.innerHTML=`<span class="rk">${icon}</span><span class="nm">${r[1]}</span>
+      <span class="sc"><b>${r[2]}</b></span>`;
+    if(board==='team') d.onclick=()=>go('profile');
+    l.appendChild(d);
+  });
+}
+
+/* ============ City Pulse (live web view) ============ */
+function renderPulse(){
+  const fr=document.getElementById('pulseFrame'), fb=document.getElementById('pulseFallback');
+  let loaded=false;
+  fr.onload=()=>{loaded=true;};
+  setTimeout(()=>{ if(!loaded){ fr.style.display='none'; fb.style.display='flex'; } },2500);
+}
+
+/* ============ Profile ============ */
+function renderProfile(){
+  const n=state.done.length;
+  document.getElementById('pDone').textContent=n;
+  document.getElementById('pBar').style.width=(n/30*100)+'%';
+  const list=document.getElementById('dayList');
+  list.innerHTML='';
+  [...state.done].sort((a,b)=>b-a).slice(0,6).forEach(d=>{
+    const dt=new Date(START); dt.setDate(dt.getDate()+d-1);
+    const label=dt.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'});
+    const steps=(9000+((d*937)%4200)).toLocaleString('en-GB');
+    const act=22+((d*7)%26), wk=(d%3===0)?30:0;
+    const card=document.createElement('div');
+    card.className='daycard';
+    card.innerHTML=`<div class="hd"><b>Day ${d}</b><span>${label}</span></div>
+      <div class="tiles" style="margin:0">
+        <div class="tile"><span class="ic">👟</span><div class="n">${steps}</div><div class="l">Steps</div></div>
+        <div class="tile"><span class="ic">🔥</span><div class="n">${act} min</div><div class="l">Active</div></div>
+        <div class="tile"><span class="ic">🏋️</span><div class="n">${wk} min</div><div class="l">Workout</div></div>
+      </div>`;
+    list.appendChild(card);
+  });
+}
+function cheer(){
+  state.cheered=!state.cheered;
+  document.getElementById('cheerTxt').textContent=state.cheered?'Cheered':'Cheer';
+  document.getElementById('cheerBtn').style.color=state.cheered?'var(--txt-3)':'var(--green)';
+}
+
+/* ============ Add workout ============ */
+function renderActivities(){
+  const q=(document.getElementById('actSearch').value||'').toLowerCase();
+  const list=document.getElementById('actList');
+  const hits=ACTIVITIES.filter(a=>a[1].toLowerCase().includes(q));
+  list.innerHTML='';
+  document.getElementById('actEmpty').style.display=hits.length?'none':'block';
+  hits.forEach(a=>{
+    const b=document.createElement('button');
+    b.className='actrow'+(state.activity===a[1]?' on':'');
+    b.innerHTML=`<span class="ic">${a[0]}</span><span class="nm">${a[1]}</span>${state.activity===a[1]?'<span style="color:var(--cyan)">✓</span>':''}`;
+    b.onclick=()=>{state.activity=a[1];renderActivities();document.getElementById('actBtn').disabled=false;};
+    list.appendChild(b);
+  });
+  document.getElementById('actBtn').disabled=!state.activity;
+}
+function renderDuration(){
+  document.getElementById('durAct').textContent=state.activity||'Padel';
+  const c=document.getElementById('durChips');
+  c.innerHTML='';
+  [30,60,120].forEach(m=>{
+    const b=document.createElement('button');
+    b.textContent=m+' min';
+    b.className=state.mins===m?'on':'';
+    b.onclick=()=>{state.mins=m;document.getElementById('durManual').value='';renderDuration();};
+    c.appendChild(b);
+  });
+  document.getElementById('dOptToday').classList.toggle('on',state.dateOpt==='today');
+  document.getElementById('dOptYest').classList.toggle('on',state.dateOpt==='yesterday');
+  document.getElementById('dOptPick').classList.toggle('on',state.dateOpt==='pick');
+  document.getElementById('dOptPick').textContent = state.dateOpt==='pick'
+    ? dayLabel(state.pickedDay) : 'Choose another day';
+}
+function manualMins(){
+  const v=parseInt(document.getElementById('durManual').value||'0',10);
+  const err=document.getElementById('durErr');
+  if(v>300){err.style.display='block';document.getElementById('saveBtn').disabled=true;return;}
+  err.style.display='none';document.getElementById('saveBtn').disabled=false;
+  if(v>0){state.mins=v;document.querySelectorAll('#durChips button').forEach(b=>b.classList.remove('on'));}
+}
+function setDateOpt(o){
+  state.dateOpt=o;
+  state.pickedDay = o==='today'?TODAY:(o==='yesterday'?TODAY-1:state.pickedDay);
+  renderDuration();
+}
+function dayLabel(d){
+  const dt=new Date(START); dt.setDate(dt.getDate()+d-1);
+  return dt.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'});
+}
+function renderCalendar(){
+  const g=document.getElementById('calGrid');
+  g.innerHTML='';
+  ['Su','Mo','Tu','We','Th','Fr','Sa'].forEach(d=>{
+    const e=document.createElement('div'); e.className='dow'; e.textContent=d; g.appendChild(e);
+  });
+  // 1 Nov 2026 is a Sunday → no leading blanks
+  const lead=new Date(2026,10,1).getDay();
+  for(let i=0;i<lead;i++) g.appendChild(document.createElement('div'));
+  for(let d=1;d<=30;d++){
+    const b=document.createElement('button');
+    b.textContent=d;
+    const inWindow = d<=TODAY && d>=TODAY-7;
+    if(!inWindow) b.className='off';
+    else{
+      if(state.done.includes(d)) b.classList.add('has');
+      if(state.pickedDay===d) b.classList.add('sel');
+      b.onclick=()=>{state.pickedDay=d;state.dateOpt='pick';renderCalendar();};
+    }
+    g.appendChild(b);
+  }
+}
+function saveWorkout(){
+  const d=state.pickedDay;
+  const wasDone=state.done.includes(d);
+  if(d===TODAY){ state.todayWorkout+=state.mins; }
+  const nowMet = d===TODAY ? goalMet() : true;
+  if(!wasDone && nowMet && !state.done.includes(d)) state.done.push(d);
+  closeModal();
+  go('scorecard');
+  let msg;
+  if(d!==TODAY) msg=`${state.mins} min added to ${dayLabel(d)}`;
+  else if(nowMet) msg=`Nice one — ${state.mins} min added, today's goal is met`;
+  else msg=`${state.mins} min added — ${30-(state.todayActive+state.todayWorkout)} min to go today`;
+  toast(msg);
+  if(nowMet && !wasDone) setTimeout(()=>showDayBadge(d),1100);
+}
+
+/* ============ Init ============ */
+renderCode(); renderCommunities(); renderActivities(); renderScorecard(); renderBoard(); applyFinished();
+</script>
+</body>
+</html>
