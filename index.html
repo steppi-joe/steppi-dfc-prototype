@@ -403,6 +403,31 @@
   .pulserow .top{display:flex;justify-content:space-between;font-size:13.5px;margin-bottom:5px}
   .pulserow .top s{color:var(--txt-2);text-decoration:none;font-size:12px}
 
+  .fincard{border-radius:22px;padding:1.5px;background:linear-gradient(150deg,#00B7FF,#7CFF1E)}
+  .fincard .inner{
+    border-radius:21px;padding:24px 18px 22px;text-align:center;
+    background:linear-gradient(180deg,#0E3A4E 0%,#14522F 45%,#2A7A15 100%)
+  }
+  .finttl{font-size:33px;font-weight:800;font-style:italic;line-height:1.02;margin-bottom:18px}
+  .finttl b{color:var(--green)}
+  .finttl span{color:#fff}
+  .finrow{
+    display:flex;align-items:center;gap:13px;background:rgba(0,0,0,.30);
+    border-radius:13px;padding:11px 13px;margin-bottom:13px;text-align:left
+  }
+  .finrow span{font-size:17px;font-weight:650}
+  .finclaim{
+    border:1.5px solid;border-image:linear-gradient(90deg,#00B7FF,#7CFF1E) 1;
+    border-radius:13px;padding:14px 12px;font-size:14px;color:#EAF4EC;line-height:1.6;margin-bottom:20px
+  }
+  .finclaim b{color:#fff;font-weight:700}
+  .finshare{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+  .finshare button{
+    background:rgba(0,0,0,.22);border:1px solid rgba(255,255,255,.22);border-radius:11px;
+    color:#fff;font-family:var(--font);font-size:10.5px;padding:12px 4px;cursor:pointer
+  }
+  .finshare button:hover{background:rgba(0,0,0,.34)}
+
   .sharecard{text-align:center}
   .sharecard .yr{font-size:31px;font-weight:800;font-style:italic;letter-spacing:-.01em;margin:2px 0 14px}
   .sharecard .yr b{color:var(--green)}
@@ -1304,27 +1329,34 @@
 
   <!-- Finisher badge -->
   <div class="overlay" id="m-finisher">
-    <div class="sheet">
+    <div class="sheet" style="background:none;border:0;padding:0">
       <button class="x" onclick="closeModal()">✕</button>
-      <div class="badgecard gold">
-        <div class="dfc" id="logo9"></div>
-        <div class="dayline" style="color:var(--green)">DFC</div>
-        <div class="finline">FINISHER</div>
-        <div class="person"><div class="avatar" style="width:30px;height:30px;flex:0 0 30px;font-size:12px">JK</div><div class="nm">Jessica Kodan</div></div>
-        <div class="claim">I've completed <b>all 30 days</b><br>Dubai Fitness Challenge 2026</div>
-        <img class="steppi" src="https://mcusercontent.com/348170726566bdf6f8f4d311d/images/b6200ccb-274c-465c-2bcf-7299c4c99941.png" alt="STEPPI" style="height:23px">
-        <div class="cta">Track your 30x30<br>on STEPPI</div>
-        <div class="tag">#Dubai30x30</div>
-      </div>
-      <div style="font-size:13px;color:var(--txt-2);text-align:center;margin:16px 0 0">Share your badge</div>
-      <div class="sharegrid">
-        <button onclick="toast('Opening Instagram Story…')"><span class="ic">📷</span>Instagram Story</button>
-        <button onclick="toast('Opening Instagram…')"><span class="ic">📷</span>Instagram Post</button>
-        <button onclick="toast('Opening WhatsApp…')"><span class="ic">💬</span>WhatsApp</button>
-        <button onclick="toast('Opening Facebook Story…')"><span class="ic">📘</span>Facebook Story</button>
-        <button onclick="toast('Opening Facebook…')"><span class="ic">📘</span>Facebook Post</button>
-        <button onclick="toast('Opening share sheet…')"><span class="ic">↗</span>More</button>
-      </div>
+      <div class="fincard"><div class="inner">
+        <div class="dfc" id="logo9" style="margin:0 0 6px"></div>
+        <div class="finttl"><b>DFC</b><br><span>FINISHER</span></div>
+
+        <div class="finrow">
+          <div class="avatar" style="width:34px;height:34px;flex:0 0 34px;font-size:13px">JK</div>
+          <span>Jessica Kodan</span>
+        </div>
+
+        <div class="finclaim">
+          I've completed all 30 days<br><b>Dubai Fitness Challenge 2026</b>
+        </div>
+
+        <img class="steppi" src="https://mcusercontent.com/348170726566bdf6f8f4d311d/images/b6200ccb-274c-465c-2bcf-7299c4c99941.png" alt="STEPPI" style="height:28px;margin-top:4px">
+        <div style="font-size:12.5px;color:#DCEAE0;margin-top:6px">Track your 30x30 on STEPPI</div>
+
+        <div style="font-size:12.5px;color:#C6DCCB;margin:16px 0 9px">Share your badge</div>
+        <div class="finshare">
+          <button onclick="toast('Opening Instagram Story…')">Instagram Story</button>
+          <button onclick="toast('Opening Instagram…')">Instagram Post</button>
+          <button onclick="toast('Opening WhatsApp…')">WhatsApp</button>
+          <button onclick="toast('Opening Facebook Story…')">Facebook Story</button>
+          <button onclick="toast('Opening Facebook…')">Facebook Post</button>
+          <button onclick="toast('Opening share sheet…')">More</button>
+        </div>
+      </div></div>
     </div>
   </div>
 
