@@ -109,14 +109,19 @@
   .dots i.on{background:var(--cyan)}
 
   /* ---------- Logo ---------- */
-  .dfc{display:flex;flex-direction:column;align-items:center;gap:6px;margin:4px 0 18px}
+  .dfc{display:flex;flex-direction:column;align-items:center;margin:4px 0 18px}
   .dfc svg{display:block}
   .dfc .cap{
     font-size:9px;font-weight:800;font-style:italic;letter-spacing:.06em;color:var(--cyan);
     text-align:center;line-height:1.25
   }
-  .steppi{font-size:22px;font-weight:800;letter-spacing:.06em;display:inline-flex;align-items:center}
-  .steppi .e{color:var(--green);margin:0 1px}
+  .steppi{display:inline-block;height:23px;width:auto;vertical-align:middle}
+  /* DFC roundel cropped out of the full lockup (436x548, circle occupies top 355px) */
+  .dfcmark{
+    display:inline-block;aspect-ratio:1;background-repeat:no-repeat;
+    background-image:url("https://mcusercontent.com/348170726566bdf6f8f4d311d/images/5ee0d5e4-edcd-2af8-4733-5385b2d03b6f.png");background-size:123% auto;background-position:50% 0
+  }
+  .dfcfull{display:block;height:auto}
 
   /* ---------- Type ---------- */
   h2.h{font-size:27px;font-weight:700;text-align:center;margin:0 0 8px;letter-spacing:-.02em}
@@ -496,7 +501,7 @@
     <div style="display:flex;flex-direction:column;align-items:center">
       <div class="dfc" id="logoSplash" style="margin-bottom:6px"></div>
       <div style="width:150px;height:1px;background:rgba(255,255,255,.5);margin:20px 0 18px"></div>
-      <div class="steppi" style="font-size:34px">ST<span class="e">≡</span>PPI</div>
+      <img class="steppi" src="https://mcusercontent.com/348170726566bdf6f8f4d311d/images/b6200ccb-274c-465c-2bcf-7299c4c99941.png" alt="STEPPI" style="height:36px">
     </div>
     <div style="position:absolute;bottom:46px;font-size:11px;color:rgba(255,255,255,.35)">Tap to continue</div>
   </div>
@@ -505,7 +510,7 @@
   <div class="screen" id="home" style="background:var(--navy)">
     <div class="statusbar"><span>1:41</span><span class="icons">▮▮▮ ᯤ ▰</span></div>
     <div style="display:flex;align-items:center;justify-content:center;position:relative;padding:2px 20px 12px">
-      <div class="steppi" style="font-size:23px">ST<span class="e">≡</span>PPI</div>
+      <img class="steppi" src="https://mcusercontent.com/348170726566bdf6f8f4d311d/images/b6200ccb-274c-465c-2bcf-7299c4c99941.png" alt="STEPPI" style="height:24px">
       <span style="position:absolute;right:20px;font-size:17px">🔔</span>
     </div>
     <div style="background:var(--teal);color:#06342A;display:flex;align-items:center;justify-content:center;gap:14px;padding:9px">
@@ -547,7 +552,7 @@
       <div style="font-size:14px;margin-bottom:10px">Go Sport — 15% off purchases</div>
       <div class="ncard" style="padding:14px">
         <div style="background:linear-gradient(135deg,#0E7FA8,#1BB9C9);border-radius:11px;padding:22px 16px;text-align:center">
-          <div class="steppi" style="font-size:15px;justify-content:center">ST<span class="e">≡</span>PPI</div>
+          <img class="steppi" src="https://mcusercontent.com/348170726566bdf6f8f4d311d/images/b6200ccb-274c-465c-2bcf-7299c4c99941.png" alt="STEPPI" style="height:16px">
           <div style="font-size:34px;font-weight:800;margin:14px 0 2px">GO</div>
           <div style="font-size:12px;letter-spacing:.4em">SPORT</div>
           <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-top:20px;font-size:10px;letter-spacing:.06em">
@@ -573,7 +578,7 @@
   <div class="screen" id="challenges" style="background:#1B2138">
     <div class="statusbar"><span>1:41</span><span class="icons">▮▮▮ ᯤ ▰</span></div>
     <div style="display:flex;align-items:center;justify-content:center;position:relative;padding:2px 20px 14px">
-      <div class="steppi" style="font-size:23px">ST<span class="e">≡</span>PPI</div>
+      <img class="steppi" src="https://mcusercontent.com/348170726566bdf6f8f4d311d/images/b6200ccb-274c-465c-2bcf-7299c4c99941.png" alt="STEPPI" style="height:24px">
       <span style="position:absolute;right:20px;font-size:17px">🔔</span>
     </div>
     <div style="display:flex;border-bottom:1px solid #2C3554">
@@ -1262,7 +1267,7 @@
         <div class="finline">FINISHER</div>
         <div class="person"><div class="avatar" style="width:30px;height:30px;flex:0 0 30px;font-size:12px">JK</div><div class="nm">Jessica Kodan</div></div>
         <div class="hook" id="badgeHook">Dubai Fitness Challenge 2026</div>
-        <div class="steppi">ST<span class="e">≡</span>PPI</div>
+        <img class="steppi" src="https://mcusercontent.com/348170726566bdf6f8f4d311d/images/b6200ccb-274c-465c-2bcf-7299c4c99941.png" alt="STEPPI" style="height:23px">
         <div class="cta">Track your 30x30<br>on STEPPI</div>
         <div class="tag">#Dubai30x30</div>
       </div>
@@ -1288,7 +1293,7 @@
         <div class="finline">FINISHER</div>
         <div class="person"><div class="avatar" style="width:30px;height:30px;flex:0 0 30px;font-size:12px">JK</div><div class="nm">Jessica Kodan</div></div>
         <div class="claim">I've completed <b>all 30 days</b><br>Dubai Fitness Challenge 2026</div>
-        <div class="steppi">ST<span class="e">≡</span>PPI</div>
+        <img class="steppi" src="https://mcusercontent.com/348170726566bdf6f8f4d311d/images/b6200ccb-274c-465c-2bcf-7299c4c99941.png" alt="STEPPI" style="height:23px">
         <div class="cta">Track your 30x30<br>on STEPPI</div>
         <div class="tag">#Dubai30x30</div>
       </div>
@@ -1318,7 +1323,7 @@
         </div>
         <div style="font-size:18px;font-weight:700;margin-bottom:3px">Dubai Economy and Tourism</div>
         <div style="font-size:12.5px;color:var(--txt-2);margin-bottom:16px">Government leaderboard · 2nd of 24</div>
-        <div class="steppi">ST<span class="e">≡</span>PPI</div>
+        <img class="steppi" src="https://mcusercontent.com/348170726566bdf6f8f4d311d/images/b6200ccb-274c-465c-2bcf-7299c4c99941.png" alt="STEPPI" style="height:23px">
         <div class="cta">Track your 30x30 on STEPPI</div>
         <div style="font-size:12px;color:var(--txt-2);margin-top:10px;line-height:1.5">Thanks for moving with Dubai<br>Dubai Fitness Challenge 2026</div>
         <div class="tag">#Dubai30x30</div>
@@ -1341,32 +1346,24 @@
 
 <script>
 /* ============ Logo mark (placeholder) ============ */
-function dfcLogo(size,uid){
+const DFC_LOCKUP="https://mcusercontent.com/348170726566bdf6f8f4d311d/images/5ee0d5e4-edcd-2af8-4733-5385b2d03b6f.png";
+function dfcLogo(size){
   const s = size||74;
-  return `<svg width="${s}" height="${s}" viewBox="0 0 100 100">
-    <defs><linearGradient id="lg${uid}" x1="0" y1="1" x2="1" y2="0">
-      <stop offset="0" stop-color="#7CFF1E"/><stop offset="1" stop-color="#00B7FF"/>
-    </linearGradient></defs>
-    <circle cx="50" cy="50" r="40" fill="none" stroke="url(#lg${uid})" stroke-width="6"
-            stroke-linecap="round" stroke-dasharray="228 40" transform="rotate(120 50 50)"/>
-    <text x="50" y="45" text-anchor="middle" font-size="27" font-weight="900" font-style="italic"
-          fill="#7CFF1E" font-family="var(--font)">30</text>
-    <text x="50" y="72" text-anchor="middle" font-size="27" font-weight="900" font-style="italic"
-          fill="#00B7FF" font-family="var(--font)">30</text>
-    <text x="50" y="57" text-anchor="middle" font-size="16" font-weight="900" font-style="italic"
-          fill="#C8FF4D" font-family="var(--font)">x</text>
-  </svg>
-  <div class="cap">DUBAI FITNESS<br>CHALLENGE</div>`;
+  return `<img class="dfcfull" src="${DFC_LOCKUP}" alt="Dubai Fitness Challenge" style="width:${s}px">`;
+}
+function dfcMark(size){
+  const s = size||40;
+  return `<span class="dfcmark" style="width:${s}px"></span>`;
 }
 ['logo1','logo2','logo3','logo4','logo5','logo6','logo7','logo8','logo9','logo10','logo11'].forEach((id,i)=>{
-  const el=document.getElementById(id); if(el) el.innerHTML=dfcLogo(i>4?64:74,i);
+  const el=document.getElementById(id); if(el) el.innerHTML=dfcLogo(i>4?70:86);
 });
-document.getElementById('logoInfo').innerHTML=dfcLogo(30,'ia').split('<div class="cap"')[0];
-document.getElementById('logoInfoBig').innerHTML=dfcLogo(88,'ib');
-document.getElementById('logoSplash').innerHTML=dfcLogo(150,'sp');
-document.getElementById('logoBanner').innerHTML=dfcLogo(40,'bn').split('<div class="cap"')[0];
-document.getElementById('logoChal').innerHTML=dfcLogo(28,'ch').split('<div class="cap"')[0];
-document.getElementById('logoChalBig').innerHTML=dfcLogo(78,'cb').split('<div class="cap"')[0];
+document.getElementById('logoInfo').innerHTML=dfcMark(30);
+document.getElementById('logoInfoBig').innerHTML=dfcLogo(96);
+document.getElementById('logoSplash').innerHTML=dfcLogo(190);
+document.getElementById('logoBanner').innerHTML=dfcMark(42);
+document.getElementById('logoChal').innerHTML=dfcMark(28);
+document.getElementById('logoChalBig').innerHTML=dfcMark(80);
 
 /* Home activity rings */
 document.getElementById('homeRings').innerHTML=(()=>{
@@ -1380,22 +1377,7 @@ document.getElementById('homeRings').innerHTML=(()=>{
 })();
 
 /* Mini DFC badge mark used inside each earned day */
-function miniBadge(d){
-  return `<svg viewBox="0 0 100 100">
-    <defs><linearGradient id="mb${d}" x1="0" y1="1" x2="1" y2="0">
-      <stop offset="0" stop-color="#7CFF1E"/><stop offset="1" stop-color="#00B7FF"/>
-    </linearGradient></defs>
-    <circle cx="50" cy="50" r="47" fill="#0A1119"/>
-    <circle cx="50" cy="50" r="43" fill="none" stroke="url(#mb${d})" stroke-width="7"
-            stroke-linecap="round" stroke-dasharray="244 26" transform="rotate(118 50 50)"/>
-    <text x="50" y="46" text-anchor="middle" font-size="30" font-weight="900" font-style="italic"
-          fill="#7CFF1E" font-family="var(--font)">30</text>
-    <text x="50" y="76" text-anchor="middle" font-size="30" font-weight="900" font-style="italic"
-          fill="#00B7FF" font-family="var(--font)">30</text>
-    <text x="50" y="60" text-anchor="middle" font-size="17" font-weight="900" font-style="italic"
-          fill="#C8FF4D" font-family="var(--font)">x</text>
-  </svg>`;
-}
+function miniBadge(){ return `<span class="dfcmark" style="width:100%"></span>`; }
 
 /* ============ State ============ */
 const TOTAL_DAYS=30;
@@ -1567,8 +1549,14 @@ function renderCode(){
   }
 }
 function submitCode(){
-  if(state.code.toUpperCase()==='G12345'){ state.joinType='org'; go('join-confirm'); }
-  else { document.getElementById('codeErr').style.display='block'; }
+  if(state.code.toUpperCase()!=='G12345'){ document.getElementById('codeErr').style.display='block'; return; }
+  state.joinType='org';
+  if(state.codeCtx==='leaderboard'){       // already gave community + details when joining
+    state.codeCtx='join';
+    stack=['scorecard'];
+    go('leaderboard');
+    toast('Added to Dubai Economy and Tourism');
+  } else { go('join-confirm'); }
 }
 
 /* Individuals have no organisation leaderboard — route them to add a code first */
